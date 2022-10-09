@@ -1,0 +1,21 @@
+﻿@model POSSystem.ViewModel.ViewFormViewModel
+@{
+    ViewBag.Title = "Sign Off";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+@using (Html.BeginForm("Login", "Account", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken() 
+}
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('.sidebar-toggle').click();
+        $('.sidebar-toggle').prop('disabled', true);
+        window.location.href = '/Account/Login';
+    });
+</script>

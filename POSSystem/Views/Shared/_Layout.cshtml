@@ -1,42 +1,328 @@
-﻿<!DOCTYPE html>
+﻿@{
+    POSSystem.Models.EmployeeDetails employeeDetails = new POSSystem.Models.EmployeeDetails();
+    var url = HttpContext.Current.Request.RequestContext.RouteData.Values["Action"].ToString();
+    if (Session["USER_SESSION"] != null)
+    {
+        employeeDetails = (POSSystem.Models.EmployeeDetails)Session["USER_SESSION"];
+
+    }
+
+}
+
+@*@if (Session["USER_SESSION"] != null)
+    {
+        POSSystem.Repository.UserSettings repos = new POSSystem.Repository.UserSettings();
+        var dtAdminAccess = repos.IsAdminAccess(employeeDetails.UserName);
+    }*@
+<!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@ViewBag.Title - My ASP.NET Application</title>
-    @Styles.Render("~/Content/css")
+    <title>@ViewBag.Title</title>
+
+    @Styles.Render("~/Styles/css")
     @Scripts.Render("~/bundles/modernizr")
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/jqueryval")
+    <link rel="stylesheet" href="~/Content/css/mystyle.css" />
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
+
+    <!-- Google Font: Source Sans Pro -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+
+    <!-- Ionicons -->
+    <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+
 </head>
-<body>
-    <div class="navbar navbar-inverse navbar-fixed-top">
-        <div class="container">
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+<body class="hold-transition skin-blue sidebar-mini">
+    <div class="wrapper">
+        <header class="main-header">
+            <a href="@Url.Action("Index", "Home", new { area = "" })" class="logo">
+                <span class="logo-mini"><b></b></span>
+                <span class="logo-lg" style="font-size: 16px;font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif"><b>INVENTORY</b></span>
+            </a>
+
+            <nav class="navbar navbar-static-top">
+                <a href="#" class="sidebar-toggle" data-toggle="push-menu" role="button">
+                    <span class="sr-only">Toggle navigation</span>
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
-                </button>
-                @Html.ActionLink("Application name", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
-            </div>
-            <div class="navbar-collapse collapse">
-                <ul class="nav navbar-nav">
-                    <li>@Html.ActionLink("Home", "Index", "Home")</li>
-                    <li>@Html.ActionLink("About", "About", "Home")</li>
-                    <li>@Html.ActionLink("Contact", "Contact", "Home")</li>
-                </ul>
-            </div>
+                </a>
+                <!-- /.navbar-custom-menu -->
+                @if (Session["USER_SESSION"] != null)
+                {
+                    <div class="navbar-custom-menu">
+                        <ul class="nav navbar-nav">
+                            <!-- User Account Menu -->
+                            <li class="dropdown user user-menu">
+                                <!-- Menu Toggle Button -->
+                                <a href="" class="dropdown-toggle" data-toggle="dropdown">
+                                    <span class="hidden-xs">Hi @employeeDetails.UserName!</span>
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <!-- The user image in the menu -->
+                                    <li class="user-header">
+                                        <p>
+                                            <medium>@employeeDetails.FirstNm @employeeDetails.LastNm</medium>
+                                            <small>@employeeDetails.Email </small>
+                                        </p>
+                                    </li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                }
+                else
+                {
+                    if (url == "Login")
+                    {
+                        <div class="navbar-custom-menu">
+                            <ul class="nav navbar-nav">
+                                <!-- User Account Menu -->
+                                <li class="dropdown user user-menu">
+                                    <!-- Menu Toggle Button -->
+                                    <a href="@Url.Action("SignUp", "Account", new { area = "" })">
+                                        <p>Sign Up</p>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="navbar-custom-menu">
+                            <ul class="nav navbar-nav">
+                                <!-- User Account Menu -->
+                                <li class="dropdown user user-menu">
+                                    <!-- Menu Toggle Button -->
+                                    <a href="@Url.Action("Login", "Account", new { area = "" })">
+                                        <p>Sign In</p>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    }
+                }
+            </nav>
+        </header>
+        @if (Session["USER_SESSION"] != null)
+        {
+            <aside class="main-sidebar">
+                <section class="sidebar">
+
+                    <ul class="sidebar-menu tree" data-widget="tree">
+                        <li>
+                            <a href="@Url.Action("Index", "POS", new { area = "" })">
+                                <i class="glyphicon glyphicon-shopping-cart"></i>
+                                <span>POS System </span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="@Url.Action("Dashboard", "Home", new { area = "" })">
+                                <i class="glyphicon glyphicon-blackboard"></i>
+                                <span>Dashboard </span>
+                            </a>
+                        </li>
+
+                    </ul>
+                    <!--Maintenance-->
+                    <ul class="sidebar-menu" data-widget="tree">
+                        <li class="active treeview menu-open">
+                            <a href="#">
+                                <i class="glyphicon glyphicon-edit"></i><span>Request</span>
+                                <span class="pull-right-container">
+                                    <i class="fa fa-angle-left pull-right"></i>
+                                </span>
+                            </a>
+                            <ul class="treeview-menu">
+                                <li>
+                                    <a href="@Url.Action("OrderReceiving", "Inventory", new { area = "" })">
+                                         
+                                        <span>Request For Inventory </span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                    <!--Maintenance-->
+                    <ul class="sidebar-menu" data-widget="tree">
+                        <li class="active treeview menu-open">
+                            <a href="#">
+                                <i class="glyphicon glyphicon-wrench"></i><span>Maintenance</span>
+                                <span class="pull-right-container">
+                                    <i class="fa fa-angle-left pull-right"></i>
+                                </span>
+                            </a>
+                            <ul class="treeview-menu">
+                                <li>
+
+                                    @{
+                                        POSSystem.Repository.UserSettings repos = new POSSystem.Repository.UserSettings();
+                                        var dtAdminAccess = repos.IsAdminAccess(employeeDetails.UserName);
+
+                                    }
+                                    @if (dtAdminAccess.CodeTxt == "Yes")
+                                    {
+                                        <a href="@Url.Action("UserManagement", "Account", new { area = "" })">
+                                            <span>User Management</span>
+                                        </a>
+                                    }
+
+                                    <a href="@Url.Action("ProductMaintenance", "Management", new { area = "" })">
+                                        <span>Product Management</span>
+                                    </a>
+                                    <a href="@Url.Action("CategoryManagement", "Management", new { area = "" })">
+                                        <span>Category Management</span>
+                                    </a>
+                                    <a href="@Url.Action("VendorManagement", "Management", new { area = "" })">
+                                        <span>Vendor Management</span>
+                                    </a>
+                                    <a href="@Url.Action("PromoManagement", "Management", new { area = "" })">
+                                        <span>Promo & Discount</span>
+                                    </a>
+
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                    <!--Worklist-->
+                    @if (dtAdminAccess.CodeTxt == "Yes")
+                    {
+                        <ul class="sidebar-menu" data-widget="tree">
+                            <li class="active treeview menu-open">
+                                <a href="#">
+                                    <i class="glyphicon glyphicon-check"></i><span>Worklist</span>
+                                    <span class="pull-right-container">
+                                        <i class="fa fa-angle-left pull-right"></i>
+                                    </span>
+                                </a>
+                                <ul class="treeview-menu">
+                                    <li>
+                                        <a href="@Url.Action("OrderApproval", "Inventory", new { area = "" })">
+                                            <span>Inventory Approval</span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
+                        </ul>
+                    }
+                    <!--Monitoring-->
+                    <ul class="sidebar-menu tree" data-widget="tree">
+                        <li class="treeview">
+                            <a href="#">
+                                <i class="glyphicon glyphicon-list"></i>
+                                <span>Monitoring List</span>
+                                <span class="pull-right-container">
+                                    <i class="fa fa-angle-left pull-right"></i>
+                                </span>
+                            </a>
+                            <ul class="treeview-menu">
+                                <li>
+                                    <a href="@Url.Action("InventoryManagement", "Management", new { area = "" })">
+                                        <span>Product Inventory</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="@Url.Action("BatchManagement", "Management", new { area = "" })">
+                                        <span>Batch Tracking</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="@Url.Action("SubmittedList", "Inventory", new { area = "" })">
+                                        <span>Submitted List</span>
+                                    </a>
+                                </li>
+                                @if (dtAdminAccess.CodeTxt == "Yes")
+                                {
+                                    <li>
+                                        <a href="@Url.Action("POSTransaction", "POS", new { area = "" })"><span>POS Transaction</span></a>
+                                    </li>
+                                    <li>
+                                        <a href="@Url.Action("ViewAll", "Management", new { area = "" })"><span>User Monitoring</span></a>
+                                    </li>
+                                }
+                            </ul>
+                        </li>
+                    </ul>
+                    <!--Report-->
+                    @if (dtAdminAccess.CodeTxt == "Yes")
+                    {
+                        <ul class="sidebar-menu tree" data-widget="tree">
+                            <li class="treeview">
+                                <a href="#">
+                                    <i class="glyphicon glyphicon-signal"></i>
+                                    <span>Report</span>
+                                    <span class="pull-right-container">
+                                        <i class="fa fa-angle-left pull-right"></i>
+                                    </span>
+                                </a>
+                                <ul class="treeview-menu">
+                                    <li><a href="@Url.Action("SalesReport", "Report", new { area = "" })"><span>Daily Sales Report</span></a></li>
+                                    <li><a href="@Url.Action("ProductInventory", "Report", new { area = "" })"><span>Inventory Report</span></a></li>
+                                    <li><a href="@Url.Action("DiscountSales", "Report", new { area = "" })"><span>Discount Sales Report</span></a></li>
+
+                                </ul>
+                            </li>
+                        </ul>
+                    }
+                    @if (Session["USER_SESSION"] != null)
+                    {
+
+                        <ul class="sidebar-menu tree" data-widget="tree">
+                            <li><a href="@Url.Action("LogOff", "Account", new { area = "" })"><i class="glyphicon glyphicon-log-out"></i><span>Log Out</span></a></li>
+                        </ul>
+                    }
+                </section>
+            </aside>
+        }
+
+        <div class="content-wrapper" style="min-height: 117px">
+            <section class="content-header">
+                <h1>@ViewBag.PageName</h1>
+                <ol class="breadcrumb">
+                    @RenderSection("Breadcrumbs", required: false)
+                </ol>
+            </section>
+            <section class="content" style="font-size: 12px;">
+                @RenderBody()
+            </section>
         </div>
-    </div>
-    <div class="container body-content">
-        @RenderBody()
-        <hr />
-        <footer>
-            <p>&copy; @DateTime.Now.Year - My ASP.NET Application</p>
+
+        <footer class="main-footer">
+            <div class="pull-right hidden-xs">
+                <b>Version</b> 1.2.19
+            </div>
+            <a href="https://phccac.sharepoint.com/sites/ABS/SitePages/Main.aspx" target="_blank">
+                <img src="@Url.Content("~/Content/img/ABS_DARK_small.png")" width="30" />
+            </a> <strong>iTech</strong>. <strong>Copyright &copy; @DateTime.Now.Year </strong>
         </footer>
     </div>
 
-    @Scripts.Render("~/bundles/jquery")
-    @Scripts.Render("~/bundles/bootstrap")
+    <style>
+        .skin-blue .sidebar a {
+            font-size: 0.9em;
+        }
+         
+        .form-horizontal .control-label {
+            text-align: left;
+        }
+    </style>
+    @Scripts.Render("~/bundles/bootstrapjs") 
     @RenderSection("scripts", required: false)
+
 </body>
 </html>
+ 
+<script type="text/javascript">
+    $(document).ready(function () {
+        if ('@Session["USER_SESSION"]' != "") {
+            if ('@url' == "Login" || '@url' == "SignUp") {
+                var url = '@Url.Action("Index", "Home", new {  })';
+                window.location.href = url;
+            }
+        }
+    });
+</script>

@@ -1,0 +1,945 @@
+﻿@model POSSystem.ViewModel.MonitoringViewModel
+
+
+@{
+    ViewBag.Title = "Promo/Discount Management";
+}
+@section Breadcrumbs{
+    <li><a href="#"><i class="glyphicon glyphicon-home"></i> Home</a></li>
+    <li>Worklist</li>
+    <li class="active">Promo/Discount Management</li>
+}
+
+@if (ViewBag.Status != null)
+{
+    if (ViewBag.Status == "0")
+    {
+        <div class="callout callout-danger">
+            <h4>Warning!</h4>
+            <p>
+                @Html.Raw(ViewBag.Message)
+            </p>
+        </div>
+    }
+    else
+    {
+        <div class="callout callout-success">
+            <h4>Success!</h4>
+            <p>
+                @Html.Raw(ViewBag.Message)
+            </p>
+        </div>
+    }
+}
+
+@using (Html.BeginForm("PromoManagement", "Management", FormMethod.Post, new { area = "", enctype = "multipart/form-data" }))
+{
+    @Html.HiddenFor(x => x.ActionButton)
+    <div id="mainForm">
+        <div class="box box-primary">
+            <div class="box-header with-border">
+                <h3 class="box-title">Promo/Discount Management&nbsp;</h3>
+                <div class="box-tools pull-right">
+                    <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+                </div>
+            </div>
+
+            <div class="box-header with-border">
+                <div class="btn-box-tool">
+                    <button id="btnAddLine" type="button" class="btn btn-info btn-sm pull-left" data-toggle="modal" data-backdrop="static" data-keyboard="false" data-target="#modal-request-details" style="width: 150px">Add Promo/Discount</button>
+                </div>
+            </div>
+            <div class="box-body">
+                <div class="row">
+                    <div class="col-md-12">
+                       <table class="table table-bordered table-condensed dataTable" id="listPromo">
+                            <thead>
+                                <tr>
+                                    <th>Promo Code</th>
+                                    <th>Promo Name</th>
+                                    <th>Validity</th>
+                                    <th>Price</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model.listPromo.Count > 0)
+                                {
+                                    for (int i = 0; i < Model.listPromo.Count; i++)
+                                    {
+                                        <tr>
+                                            <td>
+                                                @Model.listPromo[i].PromoCd
+                                            </td>
+                                            <td>
+                                                @Model.listPromo[i].PromoDesc
+                                            </td>
+                                            <td>
+                                                @Convert.ToDateTime(Model.listPromo[i].DateFrom).ToShortDateString() to @Convert.ToDateTime(Model.listPromo[i].DateTo).ToShortDateString()
+                                            </td>
+                                            <td>
+                                                @Convert.ToDouble(Model.listPromo[i].Price).ToString("#,##0.00")
+                                            </td>
+                                            <td>
+                                                @Model.listPromo[i].IsActive
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td colspan="5">No items to display.</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <!-- /.box-body -->
+        </div>
+
+        <div style="display:none;">
+            <button type="submit" id="btnSubmitForm"></button>
+        </div>
+        <div class="modal modal-default fade" id="modal-request-details">
+            <div class="modal-lg">
+                <div class="modal-content" id="main-modal">
+                    <div class="modal-header">
+                        <h4 class="modal-title">
+                            Promo/Discount
+                        </h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="box box-primary">
+                            <div class="modal-header">
+                                <h3 class="modal-title">
+                                    Summary
+                                </h3>
+                            </div>
+                            <div class="box-body">
+                                <div class="row">
+                                    <div class="col-md-12 form-horizontal">
+                                        <div class="form-group" id="divPromoType">
+                                            <label class="control-label input-sm col-md-2">Type<span class="text-red">*</span></label>
+                                            <div class="col-md-7">
+                                                @Html.DropDownListFor(x => x.Promo.Type, Model.Type, new { @class = "form-control" })
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12 form-horizontal">
+                                        <div class="form-group" id="divPromoDesc">
+                                            <label class="control-label input-sm col-md-2">Promo Name<span class="text-red">*</span></label>
+                                            <div class="col-md-7">
+                                                @Html.TextBoxFor(x => x.Promo.PromoDesc, new { @class = "form-control" })
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12 form-horizontal">
+                                        <div class="form-group" id="divPromoDateFrom">
+                                            <label class="control-label input-sm col-md-2">Validate From<span class="text-red">*</span></label>
+                                            <div class="col-md-7">
+                                                @Html.TextBoxFor(x => x.Promo.DateFrom, new { @class = "form-control" })
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12 form-horizontal">
+                                        <div class="form-group" id="divPromoDateTo">
+                                            <label class="control-label input-sm col-md-2">Validate To<span class="text-red">*</span></label>
+                                            <div class="col-md-7">
+                                                @Html.TextBoxFor(x => x.Promo.DateTo, new { @class = "form-control" })
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12 form-horizontal">
+                                        <div class="form-group" id="divPromoPrice">
+                                            <label class="control-label input-sm col-md-2">Price<span class="text-red">*</span></label>
+                                            <div class="col-md-7">
+                                                @Html.TextBoxFor(x => x.Promo.Price, new { @class = "form-control" })
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12 form-horizontal">
+                                        <div class="form-group" id="divPromoIsActive">
+                                            <label class="control-label input-sm col-md-2">Status<span class="text-red">*</span></label>
+                                            <div class="col-md-7">
+                                                @Html.DropDownListFor(x => x.Promo.IsActive, Model.StatusList, new { @class = "form-control" })
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-header">
+                                <h3 class="modal-title">
+                                    Details
+                                </h3>
+                            </div>
+                            <div class="box-body">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <table class="table table-bordered table-condensed dataTable" id="listPromoDetails">
+                                            <thead>
+                                                <tr>
+                                                    <th>SKU</th>
+                                                    <th>Variant No</th>
+                                                    <th>Batch Number</th>
+                                                    <th>Quantity</th>
+                                                    <th>Price</th>
+                                                    <th></th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @if (Model.listPromoDetails.Count > 0)
+                                                {
+                                                    for (int i = 0; i < Model.listPromoDetails.Count; i++)
+                                                    {
+                                                        <tr>
+                                                            <td>
+                                                                @Model.listPromoDetails[i].SKU
+                                                            </td>
+
+                                                            <td>
+                                                                @Model.listPromoDetails[i].VariantNo
+                                                            </td>
+                                                            <td>
+                                                                @Model.listPromoDetails[i].BatchNbr
+                                                            </td>
+                                                            <td>
+                                                                @Model.listPromoDetails[i].Qty
+                                                            </td>
+                                                            <td>
+                                                                @Model.listPromoDetails[i].Price
+                                                            </td>
+                                                            <td>
+                                                                @Html.HiddenFor(x => Model.listPromoDetails[i].SKU)
+                                                                @Html.HiddenFor(x => Model.listPromoDetails[i].VariantNo)
+                                                                @Html.HiddenFor(x => Model.listPromoDetails[i].BatchNbr)
+                                                                @Html.HiddenFor(x => Model.listPromoDetails[i].Qty)
+                                                                @Html.HiddenFor(x => Model.listPromoDetails[i].Price)
+
+                                                                <button class="btn btn-sm btn-primary btn-sm btnEditDetails2" style="margin-right:10px;" type="button">Edit</button>
+                                                                <button class="btn btn-sm btn-danger btn-sm btnRemoveDetails2" style="margin-right:10px;" type="button">Remove</button>
+                                                            </td>
+                                                        </tr>
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    <tr>
+                                                        <td colspan="6">No items to display.</td>
+                                                    </tr>
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <button class="btn btn-info btn-sm" type="button" id="btnAddItem" style="width: 120px">Add Item</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default btn-sm pull-left btnCloseDetails" data-dismiss="modal" style="width: 120px">Close</button>
+                        <button class="btn btn-info btn-sm" type="button" id="btnAddDetails" style="width: 120px">Add Promo</button>
+                    </div>
+                </div>
+                <div class="modal-content" id="sub-modal" style="display:none;">
+                    <div class="modal-header">
+                        <h4 class="modal-title">
+                            Promo/Discount
+                        </h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="box box-primary">
+                            <div class="box-body">
+                                <div class="row">
+                                    <div class="col-md-12 form-horizontal">
+                                        <div class="form-group" id="divSKU">
+                                            <label class="control-label input-sm col-md-2">SKU<span class="text-red">*</span></label>
+                                            <div class="col-md-7">
+                                                @Html.DropDownList("PromoDetails_SKU", Model.SKUList, new { @class = "form-control select2", style = "width: 100%;" })
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12 form-horizontal">
+                                        <div class="form-group" id="divVariantNo">
+                                            <label class="control-label input-sm col-md-2">Variant No<span class="text-red">*</span></label>
+                                            <div class="col-md-7">
+                                                @Html.DropDownList("PromoDetails_VariantNo", Model.VariantList, new { @class = "form-control select2", style = "width: 100%;" })
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12 form-horizontal">
+                                        <div class="form-group" id="divBatchNbr">
+                                            <label class="control-label input-sm col-md-2">Batch No<span class="text-red">*</span></label>
+                                            <div class="col-md-7">
+                                                @Html.DropDownList("PromoDetails_BatchNbr", Model.BatchList, new { @class = "form-control select2", style = "width: 100%;" })
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12 form-horizontal">
+                                        <div class="form-group" id="divQty">
+                                            <label class="control-label input-sm col-md-2">Quantity<span class="text-red">*</span></label>
+                                            <div class="col-md-7">
+                                                @Html.TextBoxFor(x => x.PromoDetails.Qty, new { @class = "form-control" })
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12 form-horizontal">
+                                        <div class="form-group" id="divPrice">
+                                            <label class="control-label input-sm col-md-2">Price<span class="text-red">*</span></label>
+                                            <div class="col-md-7">
+                                                @Html.TextBoxFor(x => x.PromoDetails.Price, new { @class = "form-control", @readonly="readonly" })
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default btn-sm pull-left btnCloseDetails2" style="width: 120px">Close</button>
+                        <button class="btn btn-info btn-sm" type="button" id="btnAddDetails2" style="width: 120px">Add Item</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+}
+<!--Form Default-->
+<div class="modal fade" id="modal-confirmation">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Message from WebPage</h4>
+            </div>
+            <div class="modal-body">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default pull-left modalClose" data-dismiss="modal">Close</button>
+                <button id="modalYes" type="button" class="btn btn-primary" data-dismiss="modal">Proceed</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+
+<div class="modal fade" id="modal-alert">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Message from WebPage</h4>
+            </div>
+            <div class="modal-body">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default pull-left modalClose" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+<style type="text/css">
+    .loadinggif {
+        background: url('@Url.Content("~/Content/img/ui-anim-loading.gif")') no-repeat right;
+    }
+
+    .modalload {
+        position: fixed;
+        top: 0;
+        left: 0;
+        background-color: black;
+        z-index: 99;
+        opacity: 0.8;
+        filter: alphaopacity=80;
+        -moz-opacity: 0.8;
+        min-height: 100%;
+        width: 100%;
+    }
+
+    .loading {
+        font-family: Arial;
+        font-size: 10pt;
+        border: 5px solid #67CFF5;
+        width: 200px;
+        height: 100px;
+        display: none;
+        position: fixed;
+        background-color: White;
+        z-index: 999999;
+    }
+
+    .align-amount{
+        text-align:right;
+    }
+</style>
+
+<div class="loading" align="center">
+    Loading. Please wait.<br />
+    <br />
+    <img src='@Url.Content("~/Content/img/loading.gif")' />
+</div>
+
+<link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css">
+<script src="http://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script src="@Url.Content("~/Scripts/bootstrap-dt.net/jquery.dataTables.js")"></script>
+<script src="@Url.Content("~/Scripts/bootstrap-dt/dataTables.bootstrap.js")"></script>
+<link rel="stylesheet" href="@Url.Content("~/Content/bootstrap-dt/dataTables.bootstrap.css")">
+
+<script src="@Url.Content("~/Scripts/jquery.number.js")"></script>
+<script src="@Url.Content("~/Scripts/autoNumeric.js")"></script>
+ 
+
+<script type="text/javascript">
+    function ShowProgress() {
+        setTimeout(function () {
+            var modal = $('<div />');
+            modal.addClass("modalload");
+            $('body').append(modal);
+            var loading = $(".loading");
+            loading.show();
+
+            var top = Math.max($(window).height() / 2 - loading[0].offsetHeight / 2, 0);
+            var left = Math.max($(window).width() / 2 - loading[0].offsetWidth / 2, 0);
+            loading.css({ top: top, left: left });
+        }, 200);
+    }
+
+    function SystemMessage(message) {
+        $("#modal-alert > .modal-dialog > .modal-content > .modal-body").html("<p>" + message + "</p>");
+        $('#modal-alert').modal('show');
+    }
+    function confirmation(title, message, runFunction) {
+        $("#modal-confirmation > .modal-dialog > .modal-content > .modal-header > .modal-title").html(title);
+        $("#modal-confirmation > .modal-dialog > .modal-content > .modal-body").html("<p>" + message + "</p>");
+        $("#modal-confirmation").modal();
+        $("#modalYes").click(function () {
+            ShowProgress();
+            eval(runFunction);
+            return true;
+        });
+        $('#modal-confirmation').on('hidden.bs.modal', function (e) {
+            e.preventDefault();
+            return false;
+        })
+    }
+
+</script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#listPromo').DataTable();
+        $('#listPromoDetails').DataTable();
+
+
+        $('#PromoDetails_SKU').select2();
+        $('#PromoDetails_VariantNo').select2();
+        $('#PromoDetails_BatchNbr').select2();
+
+
+        $('#btnAddDetails').text('Add ' + $('#Promo_Type').val());
+
+        if ('@ViewBag.Status' ==  "1") {
+            window.location.href = '@Url.Action("PromoManagement", "Management", new { area = "" })';
+            windows.reload(true);
+            $('#ActionButton').val('');
+        }
+
+    });
+
+    $('#btnAddDetails').click(function () {
+        if (!ValidateMainRequest()) {
+            return false;
+        }
+        else {
+            confirmation("Confirm Request", "Do you want to proceed?", "$('#btnSubmitForm').click()");
+        }
+    })
+    $('#btnSubmitForm').click(function () {
+        $('#ActionButton').val('Post');
+    });
+    $('#Promo_Type').change(function () {
+        $('#btnAddDetails').text('Add ' + $('#Promo_Type').val());
+    });
+
+    $('#btnAddLine').click(function () {
+        clearModal1Data();
+    });
+    //Add/Edit Delete modal data to table
+    var $row;
+    var rowIndex;
+
+    $('#btnAddItem').click(function () {
+        $row = null;
+        $('#main-modal').hide();
+        $('#sub-modal').show();
+        clearModal2Data();
+
+        $('#btnAddDetails2').html(' Add Details');
+        $("#divSKU").addClass("form-group");
+        $("#divVariantNo").addClass("form-group");
+        $("#divBatchNbr").addClass("form-group");
+        $("#divQty").addClass("form-group");
+        $("#divPrice").addClass("form-group");
+
+        clearModal2Data();
+    });
+
+    function clearModal2Data() {
+        $('#PromoDetails_SKU').val('0');
+        $('#PromoDetails_VariantNo').val('0');
+        $('#PromoDetails_BatchNbr').val('0');  
+
+        $('#PromoDetails_SKU').select2();
+        $('#PromoDetails_VariantNo').select2();
+        $('#PromoDetails_BatchNbr').select2();  
+
+        $('#PromoDetails_Qty').val('0');
+        $('#PromoDetails_Price').val('0.00');
+    }
+    function clearModal1Data() {
+        $('#Promo_Type option:selected').val('Promo');
+        $('#Promo_PromoDesc').val('');
+        $('#Promo_DateFrom').val('');
+        $('#Promo_DateTo').val('');
+        $('#Promo_Price').val('0.00');
+        $('#Promo_IsActive option:selected').val('Y');
+    }
+    $('.btnCloseDetails').click(function () {
+        clearModal1Data();
+    });
+    $('.btnCloseDetails2').click(function () {
+        $('#main-modal').show();
+        $('#sub-modal').hide();
+        clearModal2Data();
+    });
+    $('#btnAddDetails2').click(function () {
+        if (!ValidateRequest()) {
+            return false;
+        } 
+
+
+        var SKU = $('#PromoDetails_SKU').val();
+        var VariantNo = $('#PromoDetails_VariantNo').val();
+        var BatchNbr = $('#PromoDetails_BatchNbr').val();
+        var Qty = $('#PromoDetails_Qty').val();
+        var Price = $('#PromoDetails_Price').val();
+        var htmlActions = '';
+
+
+        if ($row == null) {
+            if ($('#listPromoDetails > tbody > tr > td').html() == 'No items to display.') {
+                $('#listPromoDetails > tbody').html('');
+            }
+
+            var tblBody = document.getElementById('listPromoDetails').getElementsByTagName('tbody')[0];
+            var rowCount = tblBody.rows.length;
+            var trDetails = document.createElement('tr');
+
+            var textnodeSKU = document.createTextNode(SKU);
+            var tdSKU = document.createElement('td');
+            tdSKU.appendChild(textnodeSKU);
+
+            var textnodeVariantNo = document.createTextNode(VariantNo);
+            var tdVariantNo = document.createElement('td');
+            tdVariantNo.appendChild(textnodeVariantNo);
+
+            var textnodeBatchNbr = document.createTextNode(BatchNbr);
+            var tdBatchNbr = document.createElement('td');
+            tdBatchNbr.appendChild(textnodeBatchNbr);
+
+            var textnodeQty = document.createTextNode(Qty);
+            var tdQty = document.createElement('td');
+            tdQty.className = "align-amount";
+            tdQty.appendChild(textnodeQty);
+
+            var textnodePrice = document.createTextNode(Price);
+            var tdPrice = document.createElement('td');
+            tdPrice.className = "align-amount";
+            tdPrice.appendChild(textnodePrice);
+
+            var tdActions = document.createElement('td');
+
+            $('<input>').attr({
+                type: 'hidden', id: 'listPromoDetails_' + rowCount + '__SKU', name: 'listPromoDetails[' + rowCount + '].SKU',
+                value: SKU
+            }).appendTo(tdActions);
+
+            $('<input>').attr({
+                type: 'hidden', id: 'listPromoDetails_' + rowCount + '__VariantNo', name: 'listPromoDetails[' + rowCount + '].VariantNo',
+                value: VariantNo
+            }).appendTo(tdActions);
+
+            $('<input>').attr({
+                type: 'hidden', id: 'listPromoDetails_' + rowCount + '__BatchNbr', name: 'listPromoDetails[' + rowCount + '].BatchNbr',
+                value: BatchNbr
+            }).appendTo(tdActions);
+
+            $('<input>').attr({
+                type: 'hidden', id: 'listPromoDetails_' + rowCount + '__Qty', name: 'listPromoDetails[' + rowCount + '].Qty',
+                value: Qty
+            }).appendTo(tdActions);
+
+            $('<input>').attr({
+                type: 'hidden', id: 'listPromoDetails_' + rowCount + '__Price', name: 'listPromoDetails[' + rowCount + '].Price',
+                value: Price
+            }).appendTo(tdActions);
+
+            htmlActions = '<button class="btn btn-sm btn-primary btn-sm btnEditDetails2" style="margin-right:10px;" type="button">Edit</button>' +
+                '<button class="btn btn-sm btn-danger btn-sm btnRemoveDetails2" style="margin-right:10px;" type="button">Remove</button >';
+
+            tdActions.insertAdjacentHTML('beforeend', htmlActions);
+
+            trDetails.appendChild(tdSKU);
+            trDetails.appendChild(tdVariantNo);
+            trDetails.appendChild(tdBatchNbr);
+            trDetails.appendChild(tdQty);
+            trDetails.appendChild(tdPrice);
+            trDetails.appendChild(tdActions);
+            tblBody.appendChild(trDetails);
+
+
+            $("#divSKU").removeClass("has-error");
+            $("#divVariantNo").removeClass("has-error");
+            $("#divBatchNbr").removeClass("has-error");
+            $("#divQty").removeClass("has-error");
+            $("#divPrice").removeClass("has-error");
+
+            $('#main-modal').show();
+            $('#sub-modal').hide();
+            clearModal2Data();
+        }
+        else {
+            $row.find('input[name$=SKU]').val(SKU);
+            $row.find('input[name$=VariantNo]').val(VariantNo);
+            $row.find('input[name$=BatchNbr]').val(BatchNbr);
+            $row.find('input[name$=Qty]').val(Qty);
+            $row.find('input[name$=Price]').val(Price);
+
+            $row.find('td:nth-child(1)').html(SKU);
+            $row.find('td:nth-child(2)').html(VariantNo);
+            $row.find('td:nth-child(3)').html(BatchNbr);
+            $row.find('td:nth-child(4)').html(Qty);
+            $row.find('td:nth-child(5)').html(Price);
+
+
+            $("#divSKU").removeClass("has-error");
+            $("#divVariantNo").removeClass("has-error");
+            $("#divBatchNbr").removeClass("has-error");
+            $("#divQty").removeClass("has-error");
+            $("#divPrice").removeClass("has-error");
+
+            $('#main-modal').show();
+            $('#sub-modal').hide();
+            clearModal2Data();
+        }
+    });
+
+    $(document).on('click', '.btnEditDetails2', function () {
+        $row = $(this).closest("tr");
+        rowIndex = $row.index();
+        $('#btnAddDetails2').html('Update Details');
+
+        $('#PromoDetails_SKU').val($row.find('input[name$=SKU]').val()).trigger('change');
+        $('#PromoDetails_VariantNo').val($row.find('input[name$=VariantNo]').val()).trigger('change');
+        $('#PromoDetails_BatchNbr').val($row.find('input[name$=BatchNbr]').val()).trigger('change'); 
+        $('#PromoDetails_Qty').val($row.find('input[name$=Qty]').val());
+        $('#PromoDetails_Price').val($row.find('input[name$=Price]').val());
+
+        $('#main-modal').hide();
+        $('#sub-modal').show();
+    });
+
+    $(document).on('click', '.btnRemoveDetails2', function () {
+        $(this).closest("tr").remove();
+        $row = null;
+        rowIndex = null;
+
+        var tblBody = document.getElementById('listPromoDetails').getElementsByTagName('tbody')[0];
+        var rowCount = tblBody.rows.length;
+        var $remRow;
+
+        if (rowCount == 0) {
+            $('#listPromoDetails > tbody').html('<tr><td colspan="6">No items to display.</td></tr>');
+        }
+
+        // Recompute the indexes of the hidden fields in the datable
+        $('#listPromoDetails > tbody > tr').each(function () {
+            var ind = $(this).index();
+            $remRow = $(this);
+
+            $remRow.find('input[name$=SKU]').attr('id', 'listPromoDetails_' + ind + '__SKU')
+                .attr('name', 'listPromoDetails[' + ind + '].SKU');
+
+            $remRow.find('input[name$=VariantNo]').attr('id', 'listPromoDetails_' + ind + '__VariantNo')
+                .attr('name', 'listPromoDetails[' + ind + '].VariantNo');
+
+            $remRow.find('input[name$=BatchNbr]').attr('id', 'listPromoDetails_' + ind + '__BatchNbr')
+                .attr('name', 'listPromoDetails[' + ind + '].BatchNbr');
+
+            $remRow.find('input[name$=Qty]').attr('id', 'listPromoDetails_' + ind + '__Qty')
+                .attr('name', 'listPromoDetails[' + ind + '].Qty');
+
+            $remRow.find('input[name$=Price]').attr('id', 'listPromoDetails_' + ind + '__Price')
+                .attr('name', 'listPromoDetails[' + ind + '].Price');
+
+
+        });
+
+    });
+     
+    function ValidateRequest() {
+        var isValid = true;
+        var invFields = "";
+        var msg = "";  
+         
+        if ($('#PromoDetails_SKU').val() == '') {
+            $("#divSKU").addClass("form-group has-error");
+            invFields = invFields + "<p>SKU is required.</p>";
+            isValid = false;
+        }
+        else {
+            $("#divSKU").removeClass("form-group has-error");
+            $("#divSKU").addClass("form-group");
+        }
+        if ($('#PromoDetails_VariantNo').val() == '') {
+            $("#divVariantNo").addClass("form-group has-error");
+            invFields = invFields + "<p>VariantNo is required.</p>";
+            isValid = false;
+        }
+        else {
+            $("#divVariantNo").removeClass("form-group has-error");
+            $("#divVariantNo").addClass("form-group");
+        }
+        if ($('#PromoDetails_BatchNbr').val() == '') {
+            $("#divBatchNbr").addClass("form-group has-error");
+            invFields = invFields + "<p>Batch No is required.</p>";
+            isValid = false;
+        }
+        else {
+            $("#divBatchNbr").removeClass("form-group has-error");
+            $("#divBatchNbr").addClass("form-group");
+        }
+
+        if ($('#PromoDetails_Qty').val() == '' || $('#PromoDetails_Qty').val() == '0') {
+            $("#divQty").addClass("form-group has-error");
+            invFields = invFields + "<p>Qty is required.</p>";
+            isValid = false;
+        }
+        else {
+            $("#divQty").removeClass("form-group has-error");
+            $("#divQty").addClass("form-group");
+        }
+
+        if ($('#PromoDetails_Price').val() == '') {
+            $("#divPrice").addClass("form-group has-error");
+            invFields = invFields + "<p>Price is required.</p>";
+            isValid = false;
+        }
+        else {
+            $("#divPrice").removeClass("form-group has-error");
+            $("#divPrice").addClass("form-group");
+        }
+         
+        if (!isValid) {
+            SystemMessage('Please validate the errors below: <br><br>' + invFields);
+        }
+
+        return isValid;
+    }
+    function ValidateMainRequest() {
+        var isValid = true;
+        var invFields = "";
+        var msg = "";
+
+        if ($('#Promo_Type option:selected').val() == '') {
+            $("#divPromoType").addClass("form-group has-error");
+            invFields = invFields + "<p>Type is required.</p>";
+            isValid = false;
+        }
+        else {
+            $("#divPromoType").removeClass("form-group has-error");
+            $("#divPromoType").addClass("form-group");
+        }
+
+        if ($('#Promo_PromoDesc').val() == '') {
+            $("#divPromoDesc").addClass("form-group has-error");
+            invFields = invFields + "<p>Description is required.</p>";
+            isValid = false;
+        }
+        else {
+            $("#divPromoDesc").removeClass("form-group has-error");
+            $("#divPromoDesc").addClass("form-group");
+        }
+
+
+        if ($('#Promo_DateFrom').val() == '') {
+            $("#divPromoDateFrom").addClass("form-group has-error");
+            invFields = invFields + "<p>Validate From is required.</p>";
+            isValid = false;
+        }
+        else {
+            $("#divPromoDateFrom").removeClass("form-group has-error");
+            $("#divPromoDateFrom").addClass("form-group");
+        }
+
+        if ($('#Promo_DateTo').val() == '') {
+            $("#divPromoDateTo").addClass("form-group has-error");
+            invFields = invFields + "<p>Validate To is required.</p>";
+            isValid = false;
+        }
+        else {
+            $("#divPromoDateTo").removeClass("form-group has-error");
+            $("#divPromoDateTo").addClass("form-group");
+        }
+
+        if ($('#Promo_Price').val() == '') {
+            $("#divPromoPrice").addClass("form-group has-error");
+            invFields = invFields + "<p>Price To is required.</p>";
+            isValid = false;
+        }
+        else {
+            $("#divPromoPrice").removeClass("form-group has-error");
+            $("#divPromoPrice").addClass("form-group");
+        }
+
+        if ($('#Promo_IsActive option:selected').val() == '') {
+            $("#divPromoIsActive").addClass("form-group has-error");
+            invFields = invFields + "<p>Price To is required.</p>";
+            isValid = false;
+        }
+        else {
+            $("#divPromoIsActive").removeClass("form-group has-error");
+            $("#divPromoIsActive").addClass("form-group");
+        }
+        if (!isValid) {
+            SystemMessage('Please validate the errors below: <br><br>' + invFields);
+        }
+
+        return isValid;
+    }
+
+    $(document).ready(function () {
+        var myDate = new Date();
+        $("#Promo_DateFrom").datepicker({
+            startDate: myDate,
+            autoclose: true,
+            changeYear: true,
+            changeMonth: true
+        });
+        $("#Promo_DateTo").datepicker({
+            startDate: myDate,
+            autoclose: true,
+            changeYear: true,
+            changeMonth: true
+        });
+    })
+
+    $('#PromoDetails_Price').autoNumeric({
+        vMin: '0.00',
+        vMax: '999999999999.00',
+        aSep: ',',
+        aDec: '.',
+        wEmpty: 'zero',
+        aForm: false
+    }).autofocus;
+
+    $('#PromoDetails_Qty').autoNumeric({
+        vMin: '0',
+        vMax: '999999999999',
+        aSep: ',',
+        aDec: '.',
+        wEmpty: 'zero',
+        aForm: false
+    }).autofocus;
+
+    $('#Promo_Price').autoNumeric({
+        vMin: '0.00',
+        vMax: '999999999999.00',
+        aSep: ',',
+        aDec: '.',
+        wEmpty: 'zero',
+        aForm: false
+    }).autofocus;
+
+    $('#PromoDetails_SKU').change(function () {  
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("FilterVariantNo", "Management", new { area = "" })',
+            data: JSON.stringify({ param1: $('#PromoDetails_SKU option:selected').val() }),
+            dataType: "json",
+            contentType: "application/json; charset=utf-8",
+            success: function (data) {
+                $('#PromoDetails_VariantNo').html('');
+                var ddlOpts;
+                var ddlOptsDefault;
+                var ddlOptsDefault = "<option value=0 selected='selected'>Select Variant No</option>";
+                $.each(data, function (index, value) {
+                    ddlOpts = ddlOpts + "<option value='" + value.cd + "'>" + value.txt + "</option>";
+                }); 
+
+                $('#PromoDetails_VariantNo').append(ddlOptsDefault);
+                $('#PromoDetails_VariantNo').append(ddlOpts);
+            },
+            error: function (response) {
+            }
+        });
+    });
+     
+
+    
+    $('#PromoDetails_VariantNo').change(function () {  
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("FilterBatchNbr", "Management", new { area = "" })',
+            data: JSON.stringify({ param1: $('#PromoDetails_SKU option:selected').val(), param2: $('#PromoDetails_VariantNo option:selected').val() }),
+            dataType: "json",
+            contentType: "application/json; charset=utf-8",
+            success: function (data) {
+                $('#PromoDetails_BatchNbr').html('');
+                var ddlOpts;
+                var ddlOptsDefault;
+                var ddlOptsDefault = "<option value=0 selected='selected'>Select Batch No</option>";
+                $.each(data, function (index, value) {
+                    ddlOpts = ddlOpts + "<option value='" + value.cd + "'>" + value.txt + "</option>";
+                }); 
+
+                $('#PromoDetails_BatchNbr').append(ddlOptsDefault);
+                $('#PromoDetails_BatchNbr').append(ddlOpts);
+            },
+            error: function (response) {
+            }
+        });
+    });
+     
+
+
+
+    $('#PromoDetails_Qty').change(function () { 
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("FilterProductPrice", "Management", new {  })',
+            data: JSON.stringify({ param1: $('#PromoDetails_SKU option:selected').val(), param2: $('#PromoDetails_VariantNo option:selected').val(), param3: $('#PromoDetails_BatchNbr option:selected').val() }),
+            dataType: "json",
+            contentType: "application/json; charset=utf-8",
+            success: function (data) {
+
+            $('#PromoDetails_Price').html(''); 
+                $.each(data, function (index, value) {
+                    ddlOpts = value.txt;
+                });
+                var amount = parseFloat(ddlOpts) * parseFloat($('#PromoDetails_Qty').val().replace(/,/g, ''));
+                $('#PromoDetails_Price').val(amount);
+            }
+        });
+    });
+
+     
+</script>

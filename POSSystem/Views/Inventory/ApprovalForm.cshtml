@@ -1,0 +1,501 @@
+﻿@model POSSystem.ViewModel.OrderViewModel
+
+@{
+    /**/
+
+    ViewBag.Title = "Inventory Approval Form";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+}
+
+@section Breadcrumbs{
+    <li><a href="#"><i class="glyphicon glyphicon-home"></i>Home</a></li>
+    <li>Order Receiving</li>
+    <li class="active">Order Receiving Form</li>
+}
+
+@if (ViewBag.Status != null)
+{
+    if (ViewBag.Status == "0")
+    {
+        <div class="callout callout-danger">
+            <h4>Warning!</h4>
+            <p>
+                @Html.Raw(ViewBag.Message)
+            </p>
+        </div>
+    }
+    else
+    {
+        <div class="callout callout-success">
+            <h4>Success!</h4>
+            <p>
+                @Html.Raw(ViewBag.Message)
+            </p>
+        </div>
+    }
+}
+@if (ViewBag.GetStatus != null)
+{
+    if (ViewBag.GetStatus == "0")
+    {
+        <div class="callout callout-danger">
+            <h4>Warning!</h4>
+            <p>
+                @Html.Raw(ViewBag.Message)
+            </p>
+        </div>
+    } 
+}
+
+@using (Html.BeginForm("ApprovalForm", "Inventory", FormMethod.Post, new { area = "", enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(x => x.ActionButton)
+    <div class="box box-primary">
+        <div class="box-header with-border">
+            <h3 class="box-title">Inventory Summary</h3>
+            <div class="box-tools pull-right">
+                <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="glyphicon glyphicon-minus"></i></button>
+            </div>
+        </div>
+        <div class="box-body">
+            <div class="row">
+                <div class="col-md-6 form-horizontal">
+                    <div class="form-group">
+                        <label class="control-label input-sm col-sm-4">Batch Number</label>
+                        <div class="col-sm-8">
+                            @Html.TextBoxFor(x => x.batch.BatchNbr, new { @class = "form-control input-sm", @readonly = "readonly" })
+                        </div>
+                    </div>
+                    <!-- /.form-group -->
+                    <div class="form-group" id="divPaidAmt">
+                        <label class="control-label input-sm col-sm-4">Total Amount</label>
+                        <div class="col-sm-8">
+                            @Html.TextBoxFor(x => x.batch.PaidAmt, new { @class = "form-control input-sm", @readonly = "readonly" })
+                        </div>
+                    </div>
+
+                    <!-- /.form-group -->
+                </div>
+                <!-- /.col -->
+                <div class="col-md-6 form-horizontal">
+                    <div class="form-group">
+                        <label class="control-label input-sm col-sm-4">Receiver Name</label>
+                        <div class="col-sm-8">
+                            @Html.TextBoxFor(x => x.batch.ReceiverNm, new { @class = "form-control input-sm", @readonly = "readonly" })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label input-sm col-sm-4">Received Date</label>
+                        <div class="col-sm-8">
+                            @Html.TextBoxFor(x => x.batch.ReceivedDate, new { @class = "form-control input-sm", @readonly = "readonly" })
+                        </div>
+                    </div>
+                    <!-- /.form-group -->
+                </div> 
+                 
+                <!-- /.col -->
+            </div>
+            <br/>
+            <div class="row">
+                <div class="col-md-6 form-horizontal">
+                    <div class="form-group">
+                        <label class="control-label input-sm col-sm-4">Vendor Code</label>
+                        <div class="col-sm-8">
+                            @Html.TextBoxFor(x => x.batch.VendorCd, new { @class = "form-control input-sm", style = "width: 100%;", @readonly = "readonly" })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label input-sm col-sm-4">Vendor Name</label>
+                        <div class="col-sm-8">
+                            @Html.TextBoxFor(x => x.batch.VendorNm, new { @class = "form-control input-sm", @readonly = "readonly" })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label input-sm col-sm-4">Location</label>
+                        <div class="col-sm-8">
+                            @Html.TextBoxFor(x => x.batch.VendorLocation, new { @class = "form-control input-sm", @readonly = "readonly" })
+                        </div>
+                    </div>
+
+                    <!-- /.form-group -->
+                </div>
+                <!-- /.col -->
+                <div class="col-md-6 form-horizontal">
+                    <div class="form-group">
+                        <label class="control-label input-sm col-sm-4">Vendor Personnel</label>
+                        <div class="col-sm-8">
+                            @Html.TextBoxFor(x => x.batch.vendorContactPerson, new { @class = "form-control input-sm", @readonly = "readonly" })
+                        </div>
+                    </div>
+                    <!-- /.form-group -->
+                    <div class="form-group">
+                        <label class="control-label input-sm col-sm-4">Contact No.</label>
+                        <div class="col-sm-8">
+                            @Html.TextBoxFor(x => x.batch.VendorContactNbr, new { @class = "form-control input-sm", @readonly = "readonly" })
+                        </div>
+                    </div>
+                    <!-- /.form-group -->
+                </div>
+            </div>
+        </div>
+        <!-- /.box-body -->
+    </div> 
+
+
+    <div class="box box-primary">
+        <div class="box-header with-border">
+            <h3 class="box-title">Inventory Details</h3>
+            <div class="box-tools pull-right">
+                <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="glyphicon glyphicon-minus"></i></button>
+            </div>
+        </div>
+        <div class="box-body">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="table-holder">
+                        <table class="table table-bordered table-condensed" id="listproduct">
+                            <thead>
+                                <tr>
+                                    <th>SKU</th>
+                                    <th>Variant No</th>
+                                    <th>Description 1</th>
+                                    <th>Description 2</th>
+                                    <th>Description 3</th>
+                                    <th>UOM</th>
+                                    <th>With VAT?</th>
+                                    <th>Category</th>
+                                    <th>Qty</th>
+                                    <th>Total Amount</th>
+                                    <th>Expiry Date</th> 
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model.listproduct.Count > 0)
+                                {
+                                    for (int i = 0; i < Model.listproduct.Count; i++)
+                                    {
+                                        <tr>
+                                            <td>@Model.listproduct[i].ItemId</td>
+                                            <td>@Model.listproduct[i].VariantNbr</td>
+                                            <td>@Model.listproduct[i].ProductDesc1</td>
+                                            <td>@Model.listproduct[i].ProductDesc2</td>
+                                            <td>@Model.listproduct[i].ProductDesc3</td>
+                                            <td>@Model.listproduct[i].UOM</td>
+                                            <td>@Model.listproduct[i].WithVat</td>
+                                            <td>@Model.listproduct[i].ProductCategory</td>
+                                            <td>@Model.listproduct[i].ReceivedQty</td>
+                                            <td class="align-amount">@Convert.ToDouble(Model.listproduct[i].BatchListPrice).ToString("#,##0.00")</td>
+                                            <td>@Convert.ToDateTime(Model.listproduct[i].ExpiryDate).ToShortDateString()
+                                                @Html.HiddenFor(x => x.listproduct[i].ItemId)
+                                                @Html.HiddenFor(x => x.listproduct[i].VariantNbr)
+                                                @Html.HiddenFor(x => x.listproduct[i].ProductDesc1)
+                                                @Html.HiddenFor(x => x.listproduct[i].ProductDesc2)
+                                                @Html.HiddenFor(x => x.listproduct[i].ProductDesc3)
+                                                @Html.HiddenFor(x => x.listproduct[i].ProductCategory)
+                                                @Html.HiddenFor(x => x.listproduct[i].UOM)
+                                                @Html.HiddenFor(x => x.listproduct[i].WithVat)
+                                                @Html.HiddenFor(x => x.listproduct[i].ReceivedQty)
+                                                @Html.HiddenFor(x => x.listproduct[i].BatchListPrice)
+                                                @Html.HiddenFor(x => x.listproduct[i].ExpiryDate)
+                                            </td> 
+                                        </tr>
+                                    }
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td colspan="12">No items to display.</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /.box-body -->
+        <div class="box-footer">
+            <div class="row" id="listproductTA">
+                <div class="col-md-12">
+                    <div class="col-md-8 form-horizontal">
+                        <div class="form-group">
+                            <p>
+                                &nbsp;The order receiving requires an acknowledgement/approval from the store manager on duty.Hence, cost will be charge<br />
+                                initially to the requestor and approval manager once the data provided above in wrong or inaccurate that could lead to profit loss <br />
+                                or any issue that might come up.
+                            </p>
+                            <br />
+                            <div id="divTermsAndConditions1">
+                                <input type="checkbox" id="chkTermsAndConditions1">&nbsp;&nbsp;<strong>I agree with the terms and condition above</strong>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 form-horizontal" id="TotalDiv">
+                        <div class="form-group">
+                            <label class="control-label input-sm col-sm-12">Total Quantity</label>
+                            <div class="col-sm-12">
+                                <input type="number" value="0.00" id="totalqty" readonly="readonly" class="form-control input-sm">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label input-sm col-sm-12">Total Amount</label>
+                            <div class="col-sm-12">
+                                <input type="number" value="0.00" id="totalamt" readonly="readonly" class="form-control input-sm">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <div class="box box-primary">
+        <div class="box-header with-border">
+            <h3 class="box-title">Terms and Conditions</h3>
+            <div class="box-tools pull-right">
+                <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="glyphicon glyphicon-minus"></i></button>
+            </div>
+        </div>
+        <div class="box-body">
+            @Html.Partial("~/Views/Shared/_termsAndAgreement001.cshtml")
+            <div style="margin-top: 20px;" id="divTermsAndConditions2">
+                <input type="checkbox" id="chkTermsAndConditions2" />&nbsp;&nbsp;<b>I agree with the terms and conditions above.</b>
+            </div>
+        </div>
+        <!-- /.box-body -->
+    </div>
+
+    <div style="display:none;">
+        <button type="submit" id="btnSubmitForm"></button>
+    </div>
+
+    <div class="row">
+        <div class="form-group row col-sm-12 pull-right">
+            <button ID="btnExit" type="button" class="btn btn-primary button-margin btn-sm pull-right" style="margin-right: 10px; width: 120px;">Exit</button>
+            <button ID="btnReject" type="button" class="btn btn-primary button-margin btn-sm pull-right" style="margin-right: 10px; width: 120px;">Reject</button>
+            <button ID="btnSubmit" type="button" class="btn btn-primary button-margin btn-sm pull-right" style="margin-right: 10px; width: 120px;">Approve</button>
+        </div>
+    </div>
+}
+ 
+
+<div class="modal fade" id="modal-confirmation">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Message from WebPage</h4>
+            </div>
+            <div class="modal-body">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default pull-left modalClose" id="confimationClose">Close</button>
+                <button id="modalYes" type="button" class="btn btn-primary" data-dismiss="modal">Proceed</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+
+<div class="modal fade" id="modal-alert">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Message from WebPage</h4>
+            </div>
+            <div class="modal-body">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default pull-left modalClose" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+
+
+<link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css">
+<script src="http://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script src="@Url.Content("~/Scripts/bootstrap-dt.net/jquery.dataTables.js")"></script>
+<script src="@Url.Content("~/Scripts/bootstrap-dt/dataTables.bootstrap.js")"></script>
+<link rel="stylesheet" href="@Url.Content("~/Content/bootstrap-dt/dataTables.bootstrap.css")">
+
+<script src="@Url.Content("~/Scripts/jquery.number.js")"></script>
+<script src="@Url.Content("~/Scripts/autoNumeric.js")"></script>
+
+
+<script type="text/javascript">
+     $(document).ready(function () {
+
+        if ('@ViewBag.Status' ==  "1") {
+            window.location.href = '@Url.Action("Index", "Home", new { area = "" })';
+            windows.reload(true);
+            $('#ActionButton').val('');
+        }
+
+    });
+    function ShowProgress() {
+        setTimeout(function () {
+            var modal = $('<div />');
+            modal.addClass("modalload");
+            $('body').append(modal);
+            var loading = $(".loading");
+            loading.show();
+
+            var top = Math.max($(window).height() / 2 - loading[0].offsetHeight / 2, 0);
+            var left = Math.max($(window).width() / 2 - loading[0].offsetWidth / 2, 0);
+            loading.css({ top: top, left: left });
+        }, 200);
+    }
+
+    function SystemMessage(message) {
+        $("#modal-alert > .modal-dialog > .modal-content > .modal-body").html("<p>" + message + "</p>");
+        $('#modal-alert').modal('show');
+    }
+    function confirmation(title, message, runFunction) {
+        $("#modal-confirmation > .modal-dialog > .modal-content > .modal-header > .modal-title").html(title);
+        $("#modal-confirmation > .modal-dialog > .modal-content > .modal-body").html("<p>" + message + "</p>");
+        $("#modal-confirmation").modal();
+        $("#modalYes").click(function () {
+            ShowProgress();
+            eval(runFunction);
+            return true;
+        });
+        $('#modal-confirmation').on('hidden.bs.modal', function (e) {
+            e.preventDefault();
+            return false;
+        })
+    }
+    function computeTotal() {
+        var qty = 0.00;
+        var amt = 0.00;
+
+        var tblBody = document.getElementById('listproduct').getElementsByTagName('tbody')[0];
+        var rowCount = tblBody.rows.length;
+
+        $('#listproduct > tbody > tr').each(function () {
+            var ind = $(this).index();
+            $remRow = $(this);
+
+            $remRow.find('input[name$=ItemId]').attr('id', 'listproduct_' + ind + '__ItemId')
+                .attr('name', 'listproduct[' + ind + '].ItemId');
+
+            $remRow.find('input[name$=VariantNbr]').attr('id', 'listproduct_' + ind + '__VariantNbr')
+                .attr('name', 'listproduct[' + ind + '].VariantNbr');
+
+            $remRow.find('input[name$=ProductDesc1]').attr('id', 'listproduct_' + ind + '__ProductDesc1')
+                .attr('name', 'listproduct[' + ind + '].ProductDesc1');
+
+            $remRow.find('input[name$=ProductDesc2]').attr('id', 'listproduct_' + ind + '__ProductDesc2')
+                .attr('name', 'listproduct[' + ind + '].ProductDesc2');
+
+            $remRow.find('input[name$=ProductDesc3]').attr('id', 'listproduct_' + ind + '__ProductDesc3')
+                .attr('name', 'listproduct[' + ind + '].ProductDesc3');
+
+            $remRow.find('input[name$=UOM]').attr('id', 'listproduct_' + ind + '__UOM')
+                .attr('name', 'listproduct[' + ind + '].UOM');
+
+            $remRow.find('input[name$=WithVat]').attr('id', 'listproduct_' + ind + '__WithVat')
+                .attr('name', 'listproduct[' + ind + '].WithVat');
+
+            $remRow.find('input[name$=ProductCategory]').attr('id', 'listproduct_' + ind + '__ProductCategory')
+                .attr('name', 'listproduct[' + ind + '].ProductCategory');
+
+            $remRow.find('input[name$=ReceivedQty]').attr('id', 'listproduct_' + ind + '__ReceivedQty')
+                .attr('name', 'listproduct[' + ind + '].ReceivedQty');
+
+            $remRow.find('input[name$=BatchListPrice]').attr('id', 'listproduct_' + ind + '__BatchListPrice')
+                .attr('name', 'listproduct[' + ind + '].BatchListPrice');
+
+            $remRow.find('input[name$=ExpiryDate]').attr('id', 'listproduct_' + ind + '__ExpiryDate')
+                .attr('name', 'listproduct[' + ind + '].ExpiryDate');
+
+            if (rowCount > 0 && $('#listproduct > tbody').find("tr:first td").eq(0).text() == 'No items to display.') {
+                $('#totalqty').val(0);
+                $('#totalamt').val(0); 
+            }
+            else if (rowCount > 0 && $('#listproduct > tbody').find("tr:first td").eq(0).text() == '') {
+                $('#totalqty').val(0);
+                $('#totalamt').val(0); 
+            }
+            else {
+                var qtyline = $('#listproduct_' + ind + '__ReceivedQty').val(); 
+                qty = parseFloat(qty) + parseFloat(qtyline.replace(/,/g, ''));
+                $('#totalqty').val(parseFloat(qty).toFixed(2));
+
+                var amtline = $('#listproduct_' + ind + '__BatchListPrice').val();
+                amt = parseFloat(amt) + parseFloat(amtline.replace(/,/g, ''));
+                $('#totalamt').val(parseFloat(amt).toFixed(2)); 
+            }
+
+        }); 
+    }
+    $(document).ready(function () {
+        computeTotal();
+    });
+
+    $('#btnSubmit').click(function () { 
+
+        if ($('#chkTermsAndConditions1').prop('checked') == true) {
+            $('#divTermsAndConditions1').css('color', 'black');
+
+            if ($('#chkTermsAndConditions2').prop('checked') == true) {
+
+                $('#divTermsAndConditions2').css('color', 'black');
+                confirmation("Confirm Request", "Do you want to proceed?", "$('#btnSubmitForm').click()");
+
+                $('#ActionButton').val('Approve');
+                return false;
+            }
+            else {
+                SystemMessage("Must agree to Terms and Agreements before you proceed");
+                $('#divTermsAndConditions2').css('color', 'red');
+            }
+        }
+        else {
+            SystemMessage("Must agree to Terms and Agreements before you proceed");
+            $('#divTermsAndConditions1').css('color', 'red');
+        }
+
+    });
+    $('#btnReject').click(function () {
+
+        if ($('#chkTermsAndConditions1').prop('checked') == true) {
+            $('#divTermsAndConditions1').css('color', 'black');
+
+            if ($('#chkTermsAndConditions2').prop('checked') == true) {
+
+                $('#divTermsAndConditions2').css('color', 'black');
+                confirmation("Confirm Request", "Do you want to proceed?", "$('#btnSubmitForm').click()");
+
+                $('#ActionButton').val('Reject');
+                return false;
+            }
+            else {
+                SystemMessage("Must agree to Terms and Agreements before you proceed");
+                $('#divTermsAndConditions2').css('color', 'red');
+            }
+        }
+        else {
+            SystemMessage("Must agree to Terms and Agreements before you proceed");
+            $('#divTermsAndConditions1').css('color', 'red');
+        }
+
+    });
+    $('#confimationClose').click(function () {
+        $('#modal-confirmation').modal('hide');
+        $('body').removeClass('modal-open');
+    });
+
+    $('#btnExit').click(function () {
+        $('#ActionButton').val('');
+        confirmation("Confirm Request", "Do you want to proceed?", "window.location.href = '@Url.Action("Index","Home",new { area = "" })';");
+        return false;
+    });
+
+</script>

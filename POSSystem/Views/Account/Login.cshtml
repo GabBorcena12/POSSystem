@@ -1,0 +1,214 @@
+﻿
+@model POSSystem.ViewModel.ViewFormViewModel
+@{
+    ViewBag.Title = "Sign In";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+@using (Html.BeginForm("Login", "Account", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    <!--Login Screen-->
+    <br>
+    <div class="container" id="divlogo">
+        @*<img src="~/Images/Pess-logo.png" style="width:150px" />*@
+    </div>
+    <div class="container" id="divcontainer">
+        <div>
+            <!--Username-->
+            <div class="row">
+                <div class="col-md-3">
+                    <label><strong>Username</strong></label>
+                </div>
+                <div class="col-md-4">
+                    <!--<input type="text" id="lblUsername" style="width:300px" />-->
+                    @Html.TextBoxFor(x => x.userAuthentication.Username, new { @class = "form-control", oncopy = "return false", onpaste = "return false" })
+                </div>
+                <div class="col-md-6" style="visibility:hidden" id="divErrorUsername">
+                    <label style="color:red"><strong>*</strong></label>
+                </div>
+            </div>
+            <!--Password-->
+            <div class="row">
+                <div class="col-md-3">
+                    <label><strong>Password</strong></label>
+                </div>
+                <div class="col-md-4">
+                    <!--<input type="password" id="lblPassword" style="width:300px" />-->
+                    @Html.PasswordFor(x => x.userAuthentication.Password, new { @class = "form-control" , oncopy = "return false", onpaste = "return false" })
+                </div>
+                <div class="col-md-6" style="visibility:hidden" id="divErrorPassword">
+                    <label style="color:red"><strong>*</strong></label>
+                </div>
+            </div>
+            <!--Forgot Password-->
+            <div class="row">
+                <div class="col-md-3">
+                    <label><strong></strong></label>
+                </div>
+                <div class="col-md-6 pull-left">
+                    <a href="~/Account/ForgotPassword" style="font-size:smaller">Forgot Password?</a>
+                </div>
+            </div>
+            <!--Button-->
+            <br />
+            <div class="row">
+                <div class="col-md-3">
+                    <label><strong></strong></label>
+                </div>
+                <div class="col-md-6">
+                    <button type="button" class="btn-submit" style="width:100%;height:35px">Submit</button>
+                </div>
+            </div>
+
+            <div class="row" id="LoginDiv">
+                <div class="col-md-3">
+                    <label><strong></strong></label>
+                </div>
+                <div class="col-md-6">
+                    <h5 style="color:red"><strong>@ViewBag.Message</strong></h5>
+                </div>
+            </div>
+            <div class="row" style="visibility:hidden">
+                <div class="col-md-3">
+                    <label><strong></strong></label>
+                </div>
+                <div class="col-md-6">
+                    <button type="submit" class="btn-submitForm" style="width:100%;height:20px"></button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container" id="divSignUp">
+        <label>Don’t have an account?</label><a href="~/Account/SignUp">Sign up</a>
+    </div>
+    <div class="modal fade" id="modal-alert">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Message from WebPage</h4>
+                </div>
+                <div class="modal-body">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default pull-left modalClose" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+}
+<script type="text/javascript">
+    $(document).ready(function () {        
+         
+        if ('@ViewBag.Status' == "0") {
+            $('#LoginDiv').show();
+        }
+        else {
+            $('#LoginDiv').hide();
+        }
+    });
+    $('.btn-submit').click(function () {
+        if (ValidateLoginRequest() == false) {
+            return false;
+        }
+        else {
+            $('.btn-submitForm').click();
+        }
+    });
+
+
+    function SystemMessage(message) {
+        $("#modal-alert > .modal-dialog > .modal-content > .modal-body").html("<p>" + message + "</p>");
+        $('#modal-alert').modal('show');
+    }
+
+    function ValidateLoginRequest() {
+        var isValid = true;
+
+        if ($('#userAuthentication_Username').val() == "" || $('#userAuthentication_Password').val() == "") {
+            SystemMessage("Username or Password must not be blank.");
+            isValid = false;
+        }
+
+        return isValid;
+    }
+    $(document).ready(function () {
+        $('.sidebar-toggle').click();
+        $('.sidebar-toggle').prop('disabled', true); 
+    });
+    
+</script>
+<style> 
+    #divlogo {
+        margin-top: 30px;
+        text-align: center;
+        border: 0px thin #f0f0f0;
+    }
+
+    #divSignUp {
+        margin-top: 30px;
+        text-align: center;
+        border: 0px thin #f0f0f0;
+    }
+
+    #divcontainer {
+        max-width: 400px;
+        margin-top: 30px;
+        width: 70%;
+        padding: 5%;
+        border: 3px solid white;
+        background-color: white;
+        box-shadow: 10px 10px 10px 10px #88888857;
+        border-radius: 10px
+    }
+
+    .btn-submit:hover {
+        color: #fff;
+        background-color: #3e3737;
+        border-color: #3e3737;
+    }
+
+    .btn-submit {
+        color: #fff;
+        background-color: #3c8dbc;
+        border-color: #3c8dbc;
+    }
+
+        .btn-submit:focus {
+            color: #fff;
+            background-color: #3c8dbc;
+            border-color: #3c8dbc;
+        }
+
+        .btn-submit:active {
+            color: #fff;
+            background-color: #3c8dbc;
+            border-color: #3c8dbc;
+        }
+
+
+
+    @@media screen and (min-width: 768px) {
+        #userAuthentication_Password {
+            width: 300%
+        }
+
+        #userAuthentication_Username {
+            width: 300%
+        }
+    }
+
+    @@media screen and (max-width: 767px) {
+        #userAuthentication_Password {
+            width: 100%
+        }
+
+        #userAuthentication_Username {
+            width: 100%
+        }
+    }
+</style>

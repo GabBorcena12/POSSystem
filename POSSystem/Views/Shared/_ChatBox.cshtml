@@ -1,0 +1,102 @@
+﻿@model POSSystem.ViewModel.MonitoringViewModel
+
+
+<div id="partialTable">
+    @if (Model.chatlist.Count > 0)
+    {
+        for (int i = 0; i < Model.chatlist.Count; i++)
+        {
+            if (Model.chatlist[i].SenderUserNm != Model.chatlist[i].You)
+            { 
+                @Html.HiddenFor(x => x.chatlist[i].Id)
+                <div class="direct-chat-messages" id="chatbox_@i">
+                    <div class="direct-chat-msg">
+                        <div class="direct-chat-info clearfix">
+                            <span class="direct-chat-name pull-left">@Model.chatlist[i].SenderNm</span>
+                            <span class="direct-chat-timestamp pull-right">@Model.chatlist[i].Datetime</span>
+                        </div>
+                        <img class="direct-chat-img" src="@Model.chatlist[i].ImagePath" alt="@Model.chatlist[i].SenderNm"><!-- /.direct-chat-img -->
+                        <div class="direct-chat-text">
+                            @Model.chatlist[i].Message
+                        </div>
+                    </div> 
+                </div> 
+            }
+            else
+            {
+                <div class="direct-chat-messages" id="chatbox_@i">
+                    <div class="direct-chat-msg right">
+                        <div class="direct-chat-info clearfix">
+                            <span class="direct-chat-name pull-right">@Model.chatlist[i].SenderNm</span>
+                            <span class="direct-chat-timestamp pull-left">@Model.chatlist[i].Datetime</span>
+                        </div><!-- /.direct-chat-info -->
+                        <img class="direct-chat-img" src="@Model.chatlist[i].ImagePath" alt="@Model.chatlist[i].SenderNm"><!-- /.direct-chat-img -->
+                        <div class="direct-chat-text">
+                            @Model.chatlist[i].Message
+                        </div><!-- /.direct-chat-text -->
+                    </div><!-- /.direct-chat-msg -->
+                </div>
+            }
+        }
+    }
+</div>
+@Styles.Render("~/Styles/css")
+@Scripts.Render("~/bundles/modernizr")
+@Scripts.Render("~/bundles/jquery")
+@Scripts.Render("~/bundles/jqueryval")
+@Scripts.Render("~/bundles/bootstrapjs")
+
+<link rel="stylesheet" href="~/Content/css/mystyle.css" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+<link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.6.0/Chart.bundle.js"></script>
+<script type="text/javascript">
+
+    $(document).ready(function () {  
+        myFunction(); 
+    });
+
+    $('.btn-flat').click(function () {
+        SendMessage(); 
+    });
+
+    $('#chatMessageBox').keydown(function (e) {
+        if (e.keyCode == 13) {
+            SendMessage();
+        }
+    });
+    function myFunction() {
+        timeout = setTimeout(ReceiveMessage, 2000); 
+    }
+    function SendMessage() {
+        var textMessage = $('#chatMessageBox').val(); 
+        $('#chatMessageBox').val('');
+
+        if (textMessage != "") {
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("SendMessage", "Home", new { area = "" })',
+                data: JSON.stringify({ message: textMessage }),
+                dataType: "json",
+                contentType: "application/json; charset=utf-8",
+                success: function (data) { 
+                },
+                error: function (response) {
+                    SystemMessage("Error occured.");
+                }
+            });
+        }
+
+    } 
+    function ReceiveMessage() {     
+        $.ajax({
+            url: "@Url.Action("UpdateChatDetails", "Home")",                
+            type: "GET",           
+            success: function (partialViewResult) {            
+                $("#partialTable").html(partialViewResult); 
+            }
+        });  
+    } 
+     
+</script>

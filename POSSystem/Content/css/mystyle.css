@@ -1,0 +1,58 @@
+﻿h3.reporttitle {
+    color: #3c8dbc;
+    font-weight: bold;
+}
+
+.list-type2 {
+    width: 90%;
+    margin: 0 auto;
+}
+
+.list-type2 ol {
+    counter-reset: li;
+    list-style: none;
+    *list-style: decimal;
+    font-size: 15px;
+    padding: 0;
+    margin-bottom: 4em;
+}
+
+.list-type2 ol ol {
+    margin: 0 0 0 2em;
+}
+
+.list-type2 a {
+    position: relative;
+    display: block;
+    padding: .4em .4em .4em 2em;
+    *padding: .4em;
+    margin: .5em 0;
+    background: #3c8dbc;
+    color: #ffffff;
+    text-decoration: none;
+    transition: all .2s ease-in-out;
+}
+
+.list-type2 a:hover {
+    background: #d6d4d4;
+    color: #3c8dbc;
+    text-decoration: none;
+    transform: scale(1.1);
+}
+
+.list-type2 a:before {
+    content: counter(li);
+    counter-increment: li;
+    position: absolute;
+    left: -1.3em;
+    top: 50%;
+    margin-top: -1.3em;
+    background: #3c8dbc;
+    height: 2.5em;
+    width: 2.5em;
+    line-height: 2em;
+    border: .3em solid #fff;
+    text-align: center;
+    font-weight: bold;
+    color: #FFF;
+}

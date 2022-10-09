@@ -1,0 +1,1252 @@
+﻿@model POSSystem.ViewModel.OrderViewModel
+
+@{
+    /**/
+
+    ViewBag.Title = "Inventory Request Form";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+}
+
+@section Breadcrumbs{
+    <li><a href="#"><i class="glyphicon glyphicon-home"></i>Home</a></li>
+    <li>Order Receiving</li>
+    <li class="active">Inventory Request Form</li>
+}
+
+@if (ViewBag.Status != null)
+{
+    if (ViewBag.Status == "0")
+    {
+        <div class="callout callout-danger">
+            <h4>Warning!</h4>
+            <p>
+                @Html.Raw(ViewBag.Message)
+            </p>
+        </div>
+    }
+    else
+    {
+        <div class="callout callout-success">
+            <h4>Success!</h4>
+            <p>
+                @Html.Raw(ViewBag.Message)
+            </p>
+        </div>
+    }
+}
+@if (ViewBag.GetStatus != null)
+{
+    if (ViewBag.GetStatus == "0")
+    {
+        <div class="callout callout-danger">
+            <h4>Warning!</h4>
+            <p>
+                @Html.Raw(ViewBag.Message)
+            </p>
+        </div>
+    }
+    else
+    {
+        <div class="callout callout-success">
+            <h4>Success!</h4>
+            <p>
+                @Html.Raw(ViewBag.Message)
+            </p>
+        </div>
+    }
+}
+
+@using (Html.BeginForm("OrderReceiving", "Inventory", FormMethod.Post, new { area = "", enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(x => x.ActionButton)
+    <div class="box box-primary">
+        <div class="box-header with-border">
+            <h3 class="box-title">Inventory Summary</h3>
+            <div class="box-tools pull-right">
+                <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="glyphicon glyphicon-minus"></i></button>
+            </div>
+        </div>
+        <div class="box-body">
+            <div class="row">
+                <div class="col-md-6 form-horizontal">
+                    <div class="form-group">
+                        <label class="control-label input-sm col-sm-4">Batch Number</label>
+                        <div class="col-sm-8">
+                            @Html.TextBoxFor(x => x.batch.BatchNbr, new { @class = "form-control input-sm", @readonly = "readonly" })
+                        </div>
+                    </div>
+                    <!-- /.form-group -->
+                    <div class="form-group" id="divPaidAmt">
+                        <label class="control-label input-sm col-sm-4">Total Amount</label>
+                        <div class="col-sm-8">
+                            @Html.TextBoxFor(x => x.batch.PaidAmt, new { @class = "form-control input-sm" })
+                        </div>
+                    </div>
+
+                    <!-- /.form-group -->
+                </div>
+                <!-- /.col -->
+                <div class="col-md-6 form-horizontal">
+                    <div class="form-group">
+                        <label class="control-label input-sm col-sm-4">Employee Name</label>
+                        <div class="col-sm-8">
+                            @Html.TextBoxFor(x => x.employeeDetails.FullNm, new { @class = "form-control input-sm", @readonly = "readonly" })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label input-sm col-sm-4">Position</label>
+                        <div class="col-sm-8">
+                            @Html.TextBoxFor(x => x.employeeDetails.Role, new { @class = "form-control input-sm", @readonly = "readonly" })
+                        </div>
+                    </div>
+                    <!-- /.form-group -->
+                </div>
+                <!-- /.col -->
+            </div>
+        </div>
+        <!-- /.box-body -->
+    </div>
+    <div class="box box-primary">
+        <div class="box-header with-border">
+            <h3 class="box-title">Vendor Details</h3>
+            <div class="box-tools pull-right">
+                <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="glyphicon glyphicon-minus"></i></button>
+            </div>
+        </div>
+        <div class="box-body">
+            <div class="row" id="divVendorDetails">
+                <div class="col-md-6 form-horizontal">
+                    <div class="form-group">
+                        <label class="control-label input-sm col-sm-4">Vendor Code</label>
+                        <div class="col-sm-8">
+                            @Html.DropDownListFor(x => x.batch.VendorCd, Model.VendorList, new { @class = "form-control select2", style = "width: 100%;" })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label input-sm col-sm-4">Vendor Name</label>
+                        <div class="col-sm-8">
+                            @Html.TextBoxFor(x => x.batch.VendorNm, new { @class = "form-control input-sm", @readonly = "readonly" })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label input-sm col-sm-4">Location</label>
+                        <div class="col-sm-8">
+                            @Html.TextBoxFor(x => x.batch.VendorLocation, new { @class = "form-control input-sm", @readonly = "readonly" })
+                        </div>
+                    </div>
+
+                    <!-- /.form-group -->
+                </div>
+                <!-- /.col -->
+                <div class="col-md-6 form-horizontal">
+                    <div class="form-group">
+                        <label class="control-label input-sm col-sm-4">Vendor Personnel</label>
+                        <div class="col-sm-8">
+                            @Html.TextBoxFor(x => x.batch.vendorContactPerson, new { @class = "form-control input-sm", @readonly = "readonly" })
+                        </div>
+                    </div>
+                    <!-- /.form-group -->
+                    <div class="form-group">
+                        <label class="control-label input-sm col-sm-4">Contact No.</label>
+                        <div class="col-sm-8">
+                            @Html.TextBoxFor(x => x.batch.VendorContactNbr, new { @class = "form-control input-sm", @readonly = "readonly" })
+                        </div>
+                    </div>
+                    <!-- /.form-group -->
+                </div>
+                <!-- /.col -->
+            </div>
+        </div>
+        <!-- /.box-body -->
+    </div>
+
+
+    <div class="box box-primary">
+        <div class="box-header with-border">
+            <h3 class="box-title">Inventory Details</h3>
+            <div class="box-tools pull-right">
+                <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="glyphicon glyphicon-minus"></i></button>
+            </div>
+        </div>
+        <div class="box-body">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="table-holder">
+                        <table class="table table-bordered table-condensed" id="listproduct">
+                            <thead>
+                                <tr>
+                                    <th>SKU</th>
+                                    <th>Variant No</th>
+                                    <th>Description 1</th>
+                                    <th>Description 2</th>
+                                    <th>Description 3</th>
+                                    <th>UOM</th>
+                                    <th>With VAT?</th>
+                                    <th>Category</th>
+                                    <th>Qty</th>
+                                    <th>Total Amount</th>
+                                    <th>Expiry Date</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model.listproduct.Count > 0)
+                                {
+                                    for (int i = 0; i < Model.listproduct.Count; i++)
+                                    {
+                                        <tr>
+                                            <td>@Model.listproduct[i].ItemId</td>
+                                            <td>@Model.listproduct[i].VariantNbr</td>
+                                            <td>@Model.listproduct[i].ProductDesc1</td>
+                                            <td>@Model.listproduct[i].ProductDesc2</td>
+                                            <td>@Model.listproduct[i].ProductDesc3</td>
+                                            <td>@Model.listproduct[i].UOM</td>                                            
+                                            <td>@Model.listproduct[i].WithVat</td>
+                                            <td>@Model.listproduct[i].ProductCategory</td>
+                                            <td>@Model.listproduct[i].ReceivedQty</td>
+                                            <td class="align-amount">@Convert.ToDouble(Model.listproduct[i].BatchListPrice).ToString("#,##0.00")</td>
+                                            <td>@Convert.ToDateTime(Model.listproduct[i].ExpiryDate).ToShortDateString()</td>
+
+                                            <td style="display:flex">
+                                                <button class="btn btn-sm btn-primary btn-sm btnEditDetails" style="margin-right:10px;" type="button">Edit</button>
+                                                <button class="btn btn-sm btn-danger btn-sm btnRemoveDetails" style="margin-right:10px;" type="button">Remove</button>
+                                                @Html.HiddenFor(x => x.listproduct[i].ItemId)
+                                                @Html.HiddenFor(x => x.listproduct[i].VariantNbr)
+                                                @Html.HiddenFor(x => x.listproduct[i].ProductDesc1)
+                                                @Html.HiddenFor(x => x.listproduct[i].ProductDesc2)
+                                                @Html.HiddenFor(x => x.listproduct[i].ProductDesc3)
+                                                @Html.HiddenFor(x => x.listproduct[i].ProductCategory)
+                                                @Html.HiddenFor(x => x.listproduct[i].UOM)
+                                                @Html.HiddenFor(x => x.listproduct[i].WithVat)
+                                                @Html.HiddenFor(x => x.listproduct[i].ReceivedQty)
+                                                @Html.HiddenFor(x => x.listproduct[i].BatchListPrice)
+                                                @Html.HiddenFor(x => x.listproduct[i].ExpiryDate)
+
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td colspan="12">No items to display.</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /.box-body -->
+        <div class="box-footer">
+            <div class="btn-box-tool">
+                <button id="btnAddLine" type="button" class="btn btn-info btn-sm pull-left" style="width: 120px">Add Line</button>
+            </div>
+        </div>
+        <div class="box-footer">
+            <div class="row" id="listproductTA">
+                <div class="col-md-12">
+                    <div class="col-md-8 form-horizontal">
+                        <div class="form-group">
+                            <p>
+                                &nbsp;The order receiving requires an acknowledgement/approval from the store manager on duty.Hence, cost will be charge<br />
+                                initially to the requestor and approval manager once the data provided above in wrong or inaccurate that could lead to profit loss <br />
+                                or any issue that might come up.
+                            </p>
+                            <br />
+                            <div id="divTermsAndConditions1">
+                                <input type="checkbox" id="chkTermsAndConditions1">&nbsp;&nbsp;<strong>I agree with the terms and condition above</strong>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 form-horizontal" id="TotalDiv">
+                        <div class="form-group">
+                            <label class="control-label input-sm col-sm-12">Total Quantity</label>
+                            <div class="col-sm-12">
+                                <input type="number" value="0.00" id="totalqty" readonly="readonly" class="form-control input-sm">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label input-sm col-sm-12">Total Amount</label>
+                            <div class="col-sm-12">
+                                <input type="number" value="0.00" id="totalamt" readonly="readonly" class="form-control input-sm">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <div class="box box-primary">
+        <div class="box-header with-border">
+            <h3 class="box-title">Terms and Conditions</h3>
+            <div class="box-tools pull-right">
+                <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="glyphicon glyphicon-minus"></i></button>
+            </div>
+        </div>
+        <div class="box-body">
+            @Html.Partial("~/Views/Shared/_termsAndAgreement001.cshtml")
+            <div style="margin-top: 20px;" id="divTermsAndConditions2">
+                <input type="checkbox" id="chkTermsAndConditions2" />&nbsp;&nbsp;<b>I agree with the terms and conditions above.</b>
+            </div>
+        </div>
+        <!-- /.box-body -->
+    </div>
+
+    <div style="display:none;">
+        <button type="submit" id="btnSubmitForm"></button>
+    </div>
+
+    <div class="row">
+        <div class="form-group row col-sm-12 pull-right">
+            <button ID="btnExit" type="button" class="btn btn-primary button-margin btn-sm pull-right" style="margin-right: 10px; width: 120px;">Exit</button>
+            <button ID="btnSubmit" type="button" class="btn btn-primary button-margin btn-sm pull-right" style="margin-right: 10px; width: 120px;">Submit</button>
+        </div>
+    </div>
+}
+<div class="modal modal-default fade" id="modal-request-details">
+    <div class="modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">
+                    Inventory Details
+                </h4>
+            </div>
+            <div class="modal-body">
+                <div class="box box-primary">
+                    <div class="box-body">
+                        <div class="row">
+                            <div class="col-md-12 form-horizontal">
+                                <div class="form-group" id="divSKU">
+                                    <label class="control-label input-sm col-sm-4">SKU<span class="text-red">*</span></label>
+                                    <div class="col-sm-8">
+                                        @Html.DropDownList("modalItemId", Model.SKUList, new { @class = "form-control select2", style = "width: 100%;" })
+                                    </div>
+                                </div>
+                                <div class="form-group" id="divVariantNbr">
+                                    <label class="control-label input-sm col-sm-4">Variant No<span class="text-red">*</span></label>
+                                    <div class="col-sm-8">
+                                        @Html.DropDownList("modalVariantNbr", Model.VariantList, new { @class = "form-control select2", style = "width: 100%;" })
+                                    </div>
+                                </div>
+
+                                <div class="form-group" id="divProductCategory">
+                                    <label class="control-label input-sm col-sm-4">Product Category<span class="text-red">*</span></label>
+                                    <div class="col-sm-8">
+                                        @Html.DropDownList("modalCategory", Model.ProdCategoryList, new { @class = "form-control select2", style = "width: 100%;" })
+                                    </div>
+                                </div>
+
+                                <div class="form-group" id="divProductDesc">
+                                    <label class="control-label input-sm col-sm-4">Product Description 1<span class="text-red">*</span></label>
+                                    <div class="col-sm-8">
+                                        <input type="text" class="form-control input-sm" id="modalDesc" />
+                                    </div>
+                                </div>
+
+                                <div class="form-group" id="divProductDesc2">
+                                    <label class="control-label input-sm col-sm-4">Product Description 2(Optional)<span class="text-red"></span></label>
+                                    <div class="col-sm-8">
+                                        <input type="text" class="form-control input-sm" id="modalDesc2" />
+                                    </div>
+                                </div>
+
+                                <div class="form-group" id="divProductDesc3">
+                                    <label class="control-label input-sm col-sm-4">Product Description 3(Optional)<span class="text-red"></span></label>
+                                    <div class="col-sm-8"> 
+                                        <input type="text" class="form-control input-sm" id="modalDesc3" />
+                                    </div>
+                                </div>
+
+                                <div class="form-group" id="divUOM">
+                                    <label class="control-label input-sm col-sm-4">Unit of Measure<span class="text-red">*</span></label>
+                                    <div class="col-sm-8"> 
+                                        <input type="text" class="form-control input-sm" id="UOM" />
+                                    </div>
+                                </div>
+                                <div class="form-group" id="divQty">
+                                    <label class="control-label input-sm col-sm-4">Received Qty<span class="text-red">*</span></label>
+                                    <div class="col-sm-8">
+                                        <input type="text" class="form-control input-sm" id="modalQty" />
+                                    </div>
+                                </div>
+                                <div class="form-group" id="divExpDate">
+                                    <label class="control-label input-sm col-sm-4">Expiry Date<span class="text-red">*</span></label>
+                                    <div class="col-sm-8">
+                                        <input type="text" class="form-control input-sm" id="modalExpDate" />
+                                    </div>
+                                </div>
+                                <div class="form-group" id="divTotalAmt">
+                                    <label class="control-label input-sm col-sm-4">Total Amount<span class="text-red">*</span></label>
+                                    <div class="col-sm-8">
+                                        <input type="text" class="form-control input-sm" id="modalTotalAmt" />
+                                    </div>
+                                </div>
+                                <div class="form-group" id="divWithVat">
+                                    <label class="control-label input-sm col-sm-4">With VAT?<span class="text-red">*</span></label>
+                                    <div class="col-sm-8">
+                                        @Html.DropDownList("WithVat", Model.YesNoList, new { @class = "form-control", style = "width: 100%;" })
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group row col-sm-12 pull-right">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default btn-sm pull-left btnCloseDetails" data-dismiss="modal" style="width: 120px">Close</button> @*data-dismiss="modal"*@
+                <button class="btn btn-info btn-sm" type="button" id="btnAddDetails" style="width: 120px">Add Item</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modal-confirmation">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Message from WebPage</h4>
+            </div>
+            <div class="modal-body">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default pull-left modalClose" id="confimationClose">Close</button>
+                <button id="modalYes" type="button" class="btn btn-primary" data-dismiss="modal">Proceed</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+
+<div class="modal fade" id="modal-alert">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Message from WebPage</h4>
+            </div>
+            <div class="modal-body">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default pull-left modalClose" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+
+
+<link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css">
+<script src="http://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script src="@Url.Content("~/Scripts/bootstrap-dt.net/jquery.dataTables.js")"></script>
+<script src="@Url.Content("~/Scripts/bootstrap-dt/dataTables.bootstrap.js")"></script>
+<link rel="stylesheet" href="@Url.Content("~/Content/bootstrap-dt/dataTables.bootstrap.css")">
+
+<script src="@Url.Content("~/Scripts/jquery.number.js")"></script>
+<script src="@Url.Content("~/Scripts/autoNumeric.js")"></script>
+
+
+<script type="text/javascript">
+     $(document).ready(function () { 
+
+        if ('@ViewBag.Status' ==  "1") {
+            window.location.href = '@Url.Action("Index", "Home", new { area = "" })';
+            windows.reload(true);
+            $('#ActionButton').val('');
+        }
+
+    });
+    function ShowProgress() {
+        setTimeout(function () {
+            var modal = $('<div />');
+            modal.addClass("modalload");
+            $('body').append(modal);
+            var loading = $(".loading");
+            loading.show();
+
+            var top = Math.max($(window).height() / 2 - loading[0].offsetHeight / 2, 0);
+            var left = Math.max($(window).width() / 2 - loading[0].offsetWidth / 2, 0);
+            loading.css({ top: top, left: left });
+        }, 200);
+    }
+
+    function SystemMessage(message) {
+        $("#modal-alert > .modal-dialog > .modal-content > .modal-body").html("<p>" + message + "</p>");
+        $('#modal-alert').modal('show');
+    }
+    function confirmation(title, message, runFunction) {
+        $("#modal-confirmation > .modal-dialog > .modal-content > .modal-header > .modal-title").html(title);
+        $("#modal-confirmation > .modal-dialog > .modal-content > .modal-body").html("<p>" + message + "</p>");
+        $("#modal-confirmation").modal();
+        $("#modalYes").click(function () {
+            ShowProgress();
+            eval(runFunction);
+            return true;
+        });
+        $('#modal-confirmation').on('hidden.bs.modal', function (e) {
+            e.preventDefault();
+            return false;
+        })
+    }
+
+    $('#batch_VendorCd').change(function () {
+        if ($('#batch_VendorCd option:selected').val() == "") {
+            $('#batch_VendorNm').val('');
+            $('#batch_VendorLocation').val('');
+            $('#batch_vendorContactPerson').val('');
+            $('#batch_VendorContactNbr').val('');
+        }
+        else {
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("FilterVendorDetails", "Management", new {  })',
+                data: JSON.stringify({ param1: $('#batch_VendorCd option:selected').val() }),
+                dataType: "json",
+                contentType: "application/json; charset=utf-8",
+                success: function (data) {
+
+                    $.each(data, function (index, value) {
+                        $('#batch_VendorNm').val(value.VendorNm);
+                        $('#batch_VendorLocation').val(value.VendorLocation);
+                        $('#batch_vendorContactPerson').val(value.ContactPerson);
+                        $('#batch_VendorContactNbr').val(value.ContactNbr);
+                    });
+                }
+            });
+        }
+    });
+
+    
+    $('#modalVariantNbr').change(function () {  
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("FilterProductDetails", "Inventory", new { area = "" })',
+            data: JSON.stringify({ param1: $('#modalItemId option:selected').val(), param2: $('#modalVariantNbr option:selected').val() }),
+            dataType: "json",
+            contentType: "application/json; charset=utf-8",
+            success: function (data) {
+
+                 
+
+                $.each(data, function (index, value) { 
+
+                    $('#modalDesc').val(value.ProductDesc1);
+                    $('#modalDesc2').val(value.ProductDesc2);
+                    $('#modalDesc3').val(value.ProductDesc3);
+                    $('#modalCategory').val(value.ProductCategory).trigger('change');
+                    $('#UOM').val(value.UOM); 
+
+                    //$('#modalDesc').prop("disabled", true);
+                    //$('#modalDesc2').prop("disabled", true);
+                    //$('#modalDesc3').prop("disabled", true);
+                    //$('#modalCategory').prop("disabled", true);
+                    //$('#UOM').prop("disabled", true);
+                     
+                });  
+                 
+
+
+            },
+            error: function (response) {
+            }
+        });
+    });
+
+    $(document).ready(function () {
+        var myDate = new Date();
+        $("#modalExpDate").datepicker({
+            startDate: myDate,
+            autoclose: true,
+            changeYear: true,
+            changeMonth: true
+        });
+
+    });
+
+
+    $(document).ready(function () {
+        $('#modalItemId').select2();
+        $('#modalVariantNbr').select2();
+        $('#modalCategory').select2();
+        $('#batch_VendorCd').select2();
+    });
+
+    $('#batch_PaidAmt').autoNumeric({
+        vMin: '0.00',
+        vMax: '999999999999.00',
+        aSep: ',',
+        aDec: '.',
+        wEmpty: 'zero',
+        aForm: false
+    }).autofocus;
+
+    $('#modalQty').autoNumeric({
+        vMin: '0',
+        vMax: '999999999999',
+        aSep: ',',
+        aDec: '.',
+        wEmpty: 'zero',
+        aForm: false
+    }).autofocus;
+
+
+    $('#modalTotalAmt').autoNumeric({
+        vMin: '0.00',
+        vMax: '999999999999.00',
+        aSep: ',',
+        aDec: '.',
+        wEmpty: 'zero',
+        aForm: false
+    }).autofocus;
+
+
+    function modalReset() {
+
+        $('#modalItemId').select2();
+        $('#modalVariantNbr').select2();
+        $('#modalCategory').select2(); 
+
+        $('#modalItemId').val('');
+        $('#modalVariantNbr').val('');
+        $('#modalCategory').val('');
+
+        $('#modalDesc').val('');
+        $('#modalDesc2').val('');
+        $('#modalDesc3').val('');
+        $('#UOM').val('');
+        $('#modalQty').val('0');
+        $('#WithVat').val('Yes');        
+        $('#modalExpDate').val('');
+        $('#modalTotalAmt').val('0.00');
+    }
+
+    $('.btnCloseDetails').click(function () {
+        modalReset();
+    });
+    $('#btnAddLine').click(function () {
+        $row = null;
+        $('#modal-request-details').modal('show');
+
+        $('#btnAddDetails').html(' Add Details');
+        $("#divSKU").addClass("form-group");
+        $("#divVariantNbr").addClass("form-group");
+        $("#divProductCategory").addClass("form-group");
+        $("#divProductDesc").addClass("form-group");
+        $("#divProductDesc2").addClass("form-group");
+        $("#divProductDesc3").addClass("form-group");
+        $("#divUOM").addClass("form-group");
+        $("#divWithVat").addClass("form-group");
+        $("#divQty").addClass("form-group");
+        $("#divExpDate").addClass("form-group");
+        $("#divTotalAmt").addClass("form-group");
+
+        modalReset();
+    });
+
+    $('#btnAddDetails').click(function () {
+        if (!ValidateRequest()) {
+            return false;
+        }
+
+        var SKU = $('#modalItemId  option:selected').val();
+        var VariantNo = $('#modalVariantNbr option:selected').val();
+        var Category = $('#modalCategory option:selected').val();
+        var Desc = $('#modalDesc').val();
+        var Desc2 = $('#modalDesc2').val();
+        var Desc3 = $('#modalDesc3').val();
+        var Qty = $('#modalQty').val();
+        var UOM = $('#UOM').val();
+        var WithVat = $('#WithVat option:selected').val();
+        var ExpDate = $('#modalExpDate').val();
+        var TotalAmt = $('#modalTotalAmt').val();
+        var htmlActions = '';
+
+        if ($row == null) {
+            if ($('#listproduct > tbody > tr > td').html() == 'No items to display.') {
+                $('#listproduct > tbody').html('');
+            }
+
+            var tblBody = document.getElementById('listproduct').getElementsByTagName('tbody')[0];
+            var rowCount = tblBody.rows.length;
+            var trDetails = document.createElement('tr');
+
+            var textnodeSKU = document.createTextNode(SKU);
+            var tdSKU = document.createElement('td');
+            tdSKU.appendChild(textnodeSKU);
+
+            var textnodeVariantNo = document.createTextNode(VariantNo);
+            var tdVariantNo = document.createElement('td');
+            tdVariantNo.appendChild(textnodeVariantNo);
+
+            var textnodeCategory = document.createTextNode(Category);
+            var tdCategory = document.createElement('td');
+            tdCategory.appendChild(textnodeCategory);
+
+            var textnodeDesc = document.createTextNode(Desc);
+            var tdDesc = document.createElement('td');
+            tdDesc.appendChild(textnodeDesc);
+
+            var textnodeDesc2 = document.createTextNode(Desc2);
+            var tdDesc2 = document.createElement('td');
+            tdDesc2.appendChild(textnodeDesc2);
+
+            var textnodeDesc3 = document.createTextNode(Desc3);
+            var tdDesc3 = document.createElement('td');
+            tdDesc3.appendChild(textnodeDesc3);
+
+            var textnodeUOM = document.createTextNode(UOM);
+            var tdUOM = document.createElement('td');
+            tdUOM.appendChild(textnodeUOM);
+
+            var textnodeWithVAT = document.createTextNode(WithVat);
+            var tdWithVAT = document.createElement('td');
+            tdWithVAT.appendChild(textnodeWithVAT);
+
+            var textnodeQty = document.createTextNode(Qty);
+            var tdQty = document.createElement('td');
+            tdQty.appendChild(textnodeQty);
+
+            var textnodeExpDate = document.createTextNode(ExpDate);
+            var tdExpDate = document.createElement('td');
+            tdExpDate.appendChild(textnodeExpDate);
+
+            var textnodeTotalAmt = document.createTextNode(TotalAmt);
+            var tdTotalAmt = document.createElement('td');
+            tdTotalAmt.className = "align-amount";
+            tdTotalAmt.appendChild(textnodeTotalAmt);
+
+
+            var tdActions = document.createElement('td');
+
+            $('<input>').attr({
+                type: 'hidden', id: 'listproduct_' + rowCount + '__ItemId', name: 'listproduct[' + rowCount + '].ItemId',
+                value: SKU
+            }).appendTo(tdActions);
+
+            $('<input>').attr({
+                type: 'hidden', id: 'listproduct_' + rowCount + '__VariantNbr', name: 'listproduct[' + rowCount + '].VariantNbr',
+                value: VariantNo
+            }).appendTo(tdActions);
+
+            $('<input>').attr({
+                type: 'hidden', id: 'listproduct_' + rowCount + '__ProductDesc1', name: 'listproduct[' + rowCount + '].ProductDesc1',
+                value: Desc
+            }).appendTo(tdActions);
+
+            $('<input>').attr({
+                type: 'hidden', id: 'listproduct_' + rowCount + '__ProductDesc2', name: 'listproduct[' + rowCount + '].ProductDesc2',
+                value: Desc2
+            }).appendTo(tdActions);
+
+            $('<input>').attr({
+                type: 'hidden', id: 'listproduct_' + rowCount + '__ProductDesc3', name: 'listproduct[' + rowCount + '].ProductDesc3',
+                value: Desc3
+            }).appendTo(tdActions);
+
+            $('<input>').attr({
+                type: 'hidden', id: 'listproduct_' + rowCount + '__UOM', name: 'listproduct[' + rowCount + '].UOM',
+                value: UOM
+            }).appendTo(tdActions);
+
+            $('<input>').attr({
+                type: 'hidden', id: 'listproduct_' + rowCount + '__WithVat', name: 'listproduct[' + rowCount + '].WithVat',
+                value: WithVat
+            }).appendTo(tdActions);
+
+            $('<input>').attr({
+                type: 'hidden', id: 'listproduct_' + rowCount + '__ProductCategory', name: 'listproduct[' + rowCount + '].ProductCategory',
+                value: Category
+            }).appendTo(tdActions);
+
+
+            $('<input>').attr({
+                type: 'hidden', id: 'listproduct_' + rowCount + '__ReceivedQty', name: 'listproduct[' + rowCount + '].ReceivedQty',
+                value: Qty
+            }).appendTo(tdActions);
+
+            $('<input>').attr({
+                type: 'hidden', id: 'listproduct_' + rowCount + '__BatchListPrice', name: 'listproduct[' + rowCount + '].BatchListPrice',
+                value: TotalAmt
+            }).appendTo(tdActions);
+
+            $('<input>').attr({
+                type: 'hidden', id: 'listproduct_' + rowCount + '__ExpiryDate', name: 'listproduct[' + rowCount + '].ExpiryDate',
+                value: ExpDate
+            }).appendTo(tdActions);
+
+            htmlActions = '<button class="btn btn-sm btn-primary btn-sm btnEditDetails" style="margin-right:10px;" type="button">Edit</button>' +
+                '<button class="btn btn-sm btn-danger btn-sm btnRemoveDetails" style="margin-right:10px;" type="button">Remove</button >';
+
+            tdActions.insertAdjacentHTML('beforeend', htmlActions);
+
+            trDetails.appendChild(tdSKU);
+            trDetails.appendChild(tdVariantNo);
+            trDetails.appendChild(tdDesc);
+            trDetails.appendChild(tdDesc2);
+            trDetails.appendChild(tdDesc3);
+            trDetails.appendChild(tdUOM);
+            trDetails.appendChild(tdWithVAT);
+            trDetails.appendChild(tdCategory);
+            trDetails.appendChild(tdQty);
+            trDetails.appendChild(tdTotalAmt);
+            trDetails.appendChild(tdExpDate); 
+            trDetails.appendChild(tdActions);
+            tblBody.appendChild(trDetails);
+
+
+            $('#btnAddDetails').html(' Add Details');
+            $("#divSKU").removeClass("has-error");
+            $("#divVariantNbr").removeClass("has-error");
+            $("#divProductDesc").removeClass("has-error");
+            $("#divProductDesc2").removeClass("has-error");
+            $("#divProductDesc3").removeClass("has-error");
+            $("#divUOM").removeClass("has-error");
+            $("#divWithVat").removeClass("has-error");
+            $("#divProductCategory").removeClass("has-error");
+            $("#divQty").removeClass("has-error");
+            $("#divExpDate").removeClass("has-error");
+            $("#divTotalAmt").removeClass("has-error");
+
+            modalReset();
+
+            $('#modal-request-details').modal('hide');
+            computeTotal();
+        }
+        else {
+            $row.find('input[name$=ItemId]').val(SKU);
+            $row.find('input[name$=VariantNbr]').val(VariantNo);
+            $row.find('input[name$=ProductDesc1]').val(Desc);
+            $row.find('input[name$=ProductDesc2]').val(Desc2);
+            $row.find('input[name$=ProductDesc3]').val(Desc3);
+            $row.find('input[name$=UOM]').val(UOM);
+            $row.find('input[name$=ProductCategory]').val(Category);
+            $row.find('input[name$=ReceivedQty]').val(Qty);
+            $row.find('input[name$=BatchListPrice]').val(TotalAmt);
+            $row.find('input[name$=ExpiryDate]').val(ExpDate);
+            $row.find('input[name$=WithVat]').val(WithVat);
+
+            $row.find('td:nth-child(1)').html(SKU);
+            $row.find('td:nth-child(2)').html(VariantNo);
+            $row.find('td:nth-child(3)').html(Desc);
+            $row.find('td:nth-child(4)').html(Desc2);
+            $row.find('td:nth-child(5)').html(Desc3);
+            $row.find('td:nth-child(6)').html(UOM);
+            $row.find('td:nth-child(7)').html(WithVat);
+            $row.find('td:nth-child(8)').html(Category);
+            $row.find('td:nth-child(9)').html(Qty);
+            $row.find('td:nth-child(10)').html(TotalAmt);
+            $row.find('td:nth-child(11)').html(ExpDate);
+             
+
+            $('#btnAddDetails').html(' Add Details');
+            $("#divSKU").removeClass("has-error");
+            $("#divVariantNbr").removeClass("has-error");
+            $("#divProductDesc").removeClass("has-error");
+            $("#divProductDesc2").removeClass("has-error");
+            $("#divProductDesc3").removeClass("has-error");
+            $("#divUOM").removeClass("has-error");
+            $("#divWithVat").removeClass("has-error");
+            $("#divProductCategory").removeClass("has-error");
+            $("#divQty").removeClass("has-error");
+            $("#divExpDate").removeClass("has-error");
+            $("#divTotalAmt").removeClass("has-error");
+
+            modalReset();
+
+            $('#modal-request-details').modal('hide');
+            computeTotal();
+        }
+    });
+
+
+    $('#modalItemId').change(function () {
+        if ($control == null) {
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("FilterVariantNo2", "Management", new { area = "" })',
+                data: JSON.stringify({ param1: $('#modalItemId option:selected').val() }),
+                dataType: "json",
+                contentType: "application/json; charset=utf-8",
+                success: function (data) {
+                    $('#modalVariantNbr').html('');
+                    var ddlOpts;
+                    var ddlOptsDefault;
+                    var ddlOptsDefault = "<option value='' selected='selected'> -- Select Variant No -- </option>";
+                    $.each(data, function (index, value) {
+                        ddlOpts = ddlOpts + "<option value='" + value.cd + "'>" + value.txt + "</option>";
+                    });
+
+                    $('#modalVariantNbr').append(ddlOptsDefault);
+                    $('#modalVariantNbr').append(ddlOpts);
+                },
+                error: function (response) {
+                }
+            });
+        }
+        else {
+            $.ajax({
+            type: "POST",
+            url: '@Url.Action("FilterVariantNo", "Management", new { area = "" })',
+            data: JSON.stringify({ param1: "" }),
+            dataType: "json",
+            contentType: "application/json; charset=utf-8",
+            success: function (data) {
+                $('#modalVariantNbr').html('');
+                var ddlOpts;
+                var ddlOptsDefault;
+                var ddlOptsDefault = "<option value='' selected='selected'> -- Select Variant No -- </option>";
+                $.each(data, function (index, value) {
+                    ddlOpts = ddlOpts + "<option value='" + value.cd + "'>" + value.txt + "</option>";
+                });
+
+                $('#modalVariantNbr').append(ddlOptsDefault);
+                $('#modalVariantNbr').append(ddlOpts);
+                $('#modalVariantNbr').val($row.find('input[name$=VariantNbr]').val());
+                },
+            error: function (response) {
+                }
+            });
+
+        }
+
+    });
+
+    $(document).click(function () {
+        $control = null;
+    });
+
+    $(document).on('click', '.btnEditDetails', function () {
+        $row = $(this).closest("tr");
+        rowIndex = $row.index(); 
+        $control = "btnEditDetails";
+
+        $('#btnAddDetails').html('Update Details');
+        $('#modalItemId').val($row.find('input[name$=ItemId]').val()).trigger('change'); //do not trigger change to populate the value of modalVariantNbr
+        $('#modalVariantNbr').val($row.find('input[name$=VariantNbr]').val()).trigger('change');
+        $('#modalCategory').val($row.find('input[name$=ProductCategory]').val()).trigger('change');
+        $('#modalDesc').val($row.find('input[name$=ProductDesc1]').val());
+        $('#modalDesc2').val($row.find('input[name$=ProductDesc2]').val());
+        $('#modalDesc3').val($row.find('input[name$=ProductDesc3]').val());
+        $('#UOM').val($row.find('input[name$=UOM]').val());
+        $('#WithVat').val($row.find('input[name$=WithVat]').val());
+        $('#modalQty').val($row.find('input[name$=ReceivedQty]').val());
+        $('#modalTotalAmt').val($row.find('input[name$=BatchListPrice]').val());
+        $('#modalExpDate').val($row.find('input[name$=ExpiryDate]').val());
+
+
+        $('#modal-request-details').modal('show');
+    });
+
+    $(document).on('click', '.btnRemoveDetails', function () {
+        $(this).closest("tr").remove();
+        $row = null;
+        rowIndex = null;
+
+        var tblBody = document.getElementById('listproduct').getElementsByTagName('tbody')[0];
+        var rowCount = tblBody.rows.length;
+        var $remRow;
+
+        if (rowCount == 0) {
+            $('#listproduct > tbody').html('<tr><td colspan="12">No items to display.</td></tr>');
+            $('#totalqty').val('0.00');
+            $('#totalamt').val('0.00');
+            $('#batch_PaidAmt').val('0.00');
+        }
+        else {
+            computeTotal();
+        }
+
+        // Recompute the indexes of the hidden fields in the datable
+        $('#listproduct > tbody > tr').each(function () {
+            var ind = $(this).index();
+            $remRow = $(this);
+
+            $remRow.find('input[name$=ItemId]').attr('id', 'listproduct_' + ind + '__ItemId')
+                .attr('name', 'listproduct[' + ind + '].ItemId');
+
+            $remRow.find('input[name$=VariantNbr]').attr('id', 'listproduct_' + ind + '__VariantNbr')
+                .attr('name', 'listproduct[' + ind + '].VariantNbr');
+
+            $remRow.find('input[name$=ProductDesc1]').attr('id', 'listproduct_' + ind + '__ProductDesc1')
+                .attr('name', 'listproduct[' + ind + '].ProductDesc1');
+
+            $remRow.find('input[name$=ProductDesc2]').attr('id', 'listproduct_' + ind + '__ProductDesc2')
+                .attr('name', 'listproduct[' + ind + '].ProductDesc2');
+
+            $remRow.find('input[name$=ProductDesc3]').attr('id', 'listproduct_' + ind + '__ProductDesc3')
+                .attr('name', 'listproduct[' + ind + '].ProductDesc3');
+
+            $remRow.find('input[name$=UOM]').attr('id', 'listproduct_' + ind + '__UOM')
+                .attr('name', 'listproduct[' + ind + '].UOM');
+
+            $remRow.find('input[name$=WithVat]').attr('id', 'listproduct_' + ind + '__WithVat')
+                .attr('name', 'listproduct[' + ind + '].WithVat');
+
+            $remRow.find('input[name$=ProductCategory]').attr('id', 'listproduct_' + ind + '__ProductCategory')
+                .attr('name', 'listproduct[' + ind + '].ProductCategory');
+
+            $remRow.find('input[name$=ReceivedQty]').attr('id', 'listproduct_' + ind + '__ReceivedQty')
+                .attr('name', 'listproduct[' + ind + '].ReceivedQty');
+
+            $remRow.find('input[name$=BatchListPrice]').attr('id', 'listproduct_' + ind + '__BatchListPrice')
+                .attr('name', 'listproduct[' + ind + '].BatchListPrice');
+
+            $remRow.find('input[name$=ExpiryDate]').attr('id', 'listproduct_' + ind + '__ExpiryDate')
+                .attr('name', 'listproduct[' + ind + '].ExpiryDate');
+        });
+
+
+    });
+
+    function ValidateRequest() {
+        var isValid = true;
+        var invFields = "";
+        var msg = "";
+
+        if ($('#modalItemId option:selected').val() == '') {
+            $("#divSKU").addClass("form-group has-error");
+            invFields = invFields + "<p>SKU is required.</p>";
+            isValid = false;
+        }
+        else {
+            $("#divSKU").removeClass("form-group has-error");
+            $("#divSKU").addClass("form-group");
+        }
+
+        if ($('#modalVariantNbr option:selected').val() == '') {
+            $("#divVariantNbr").addClass("form-group has-error");
+            invFields = invFields + "<p>Variant No is required.</p>";
+            isValid = false;
+        }
+        else {
+            $("#divVariantNbr").removeClass("form-group has-error");
+            $("#divVariantNbr").addClass("form-group");
+        }
+
+
+        if ($('#modalDesc').val() == '') {
+            $("#divProductDesc").addClass("form-group has-error");
+            invFields = invFields + "<p>Product Description is required.</p>";
+            isValid = false;
+        }
+        else {
+            $("#divProductDesc").removeClass("form-group has-error");
+            $("#divProductDesc").addClass("form-group");
+        }
+
+        if ($('#UOM').val() == '') {
+            $("#divUOM").addClass("form-group has-error");
+            invFields = invFields + "<p>Unit of Measure is required.</p>";
+            isValid = false;
+        }
+        else {
+            $("#divUOM").removeClass("form-group has-error");
+            $("#divUOM").addClass("form-group");
+        }
+
+        if ($('#modalCategory option:selected').val() == '') {
+            $("#divProductCategory").addClass("form-group has-error");
+            invFields = invFields + "<p>Product Category is required.</p>";
+            isValid = false;
+        }
+        else {
+            $("#divProductCategory").removeClass("form-group has-error");
+            $("#divProductCategory").addClass("form-group");
+        }
+
+        if ($('#modalQty').val() == '' || $('#modalQty').val() == '0') {
+            $("#divQty").addClass("form-group has-error");
+            invFields = invFields + "<p>Received Qty is required.</p>";
+            isValid = false;
+        }
+        else {
+            $("#divQty").removeClass("form-group has-error");
+            $("#divQty").addClass("form-group");
+        }
+
+        if ($('#modalExpDate').val() == '') {
+            $("#divExpDate").addClass("form-group has-error");
+            invFields = invFields + "<p>Expiry Date is required.</p>";
+            isValid = false;
+        }
+        else {
+            $("#divExpDate").removeClass("form-group has-error");
+            $("#divExpDate").addClass("form-group");
+        }
+
+        if ($('#modalTotalAmt').val() == '0.00' || $('#modalTotalAmt').val() == '') {
+            $("#divTotalAmt").addClass("form-group has-error");
+            invFields = invFields + "<p>Total Amount is required.</p>";
+            isValid = false;
+        }
+        else {
+            $("#divTotalAmt").removeClass("form-group has-error");
+            $("#divTotalAmt").addClass("form-group");
+        }
+         
+
+        if (!isValid) {
+            SystemMessage('Please validate the errors below: <br><br>' + invFields);
+        }
+
+        return isValid;
+    }
+
+    function computeTotal() {
+        var qty = 0.00;
+        var amt = 0.00;
+
+        var tblBody = document.getElementById('listproduct').getElementsByTagName('tbody')[0];
+        var rowCount = tblBody.rows.length;
+
+        $('#listproduct > tbody > tr').each(function () {
+            var ind = $(this).index();
+            $remRow = $(this);
+
+            $remRow.find('input[name$=ItemId]').attr('id', 'listproduct_' + ind + '__ItemId')
+                .attr('name', 'listproduct[' + ind + '].ItemId');
+
+            $remRow.find('input[name$=VariantNbr]').attr('id', 'listproduct_' + ind + '__VariantNbr')
+                .attr('name', 'listproduct[' + ind + '].VariantNbr');
+
+            $remRow.find('input[name$=ProductDesc1]').attr('id', 'listproduct_' + ind + '__ProductDesc1')
+                .attr('name', 'listproduct[' + ind + '].ProductDesc1');
+
+            $remRow.find('input[name$=ProductDesc2]').attr('id', 'listproduct_' + ind + '__ProductDesc2')
+                .attr('name', 'listproduct[' + ind + '].ProductDesc2');
+
+            $remRow.find('input[name$=ProductDesc3]').attr('id', 'listproduct_' + ind + '__ProductDesc3')
+                .attr('name', 'listproduct[' + ind + '].ProductDesc3');
+
+            $remRow.find('input[name$=UOM]').attr('id', 'listproduct_' + ind + '__UOM')
+                .attr('name', 'listproduct[' + ind + '].UOM');
+
+            $remRow.find('input[name$=WithVat]').attr('id', 'listproduct_' + ind + '__WithVat')
+                .attr('name', 'listproduct[' + ind + '].WithVat');
+
+            $remRow.find('input[name$=ProductCategory]').attr('id', 'listproduct_' + ind + '__ProductCategory')
+                .attr('name', 'listproduct[' + ind + '].ProductCategory');
+
+            $remRow.find('input[name$=ReceivedQty]').attr('id', 'listproduct_' + ind + '__ReceivedQty')
+                .attr('name', 'listproduct[' + ind + '].ReceivedQty');
+
+            $remRow.find('input[name$=BatchListPrice]').attr('id', 'listproduct_' + ind + '__BatchListPrice')
+                .attr('name', 'listproduct[' + ind + '].BatchListPrice');
+
+            $remRow.find('input[name$=ExpiryDate]').attr('id', 'listproduct_' + ind + '__ExpiryDate')
+                .attr('name', 'listproduct[' + ind + '].ExpiryDate');
+
+            if (rowCount > 0 && $('#listproduct > tbody').find("tr:first td").eq(0).text() == 'No items to display.') {
+                $('#totalqty').val(0);
+                $('#totalamt').val(0);
+                $('#batch_PaidAmt').val(0);
+            }
+            else if (rowCount > 0 && $('#listproduct > tbody').find("tr:first td").eq(0).text() == '') {
+                $('#totalqty').val(0);
+                $('#totalamt').val(0);
+                $('#batch_PaidAmt').val(0);
+            }
+            else {
+                var qtyline = $('#listproduct_' + ind + '__ReceivedQty').val();
+                qty = parseFloat(qty) + parseFloat(qtyline.replace(/,/g, ''));
+                $('#totalqty').val(parseFloat(qty).toFixed(2));
+
+                var amtline = $('#listproduct_' + ind + '__BatchListPrice').val();
+                amt = parseFloat(amt) + parseFloat(amtline.replace(/,/g, ''));
+                $('#totalamt').val(parseFloat(amt).toFixed(2));
+                $('#batch_PaidAmt').val(parseFloat(amt).toFixed(2));
+            }
+
+        });
+
+    }
+
+    $('#btnSubmit').click(function () {
+        if (!ValidateAllDetails()) {
+            return false;
+        } 
+
+        if ($('#chkTermsAndConditions1').prop('checked') == true) {
+            $('#divTermsAndConditions1').css('color', 'black');
+
+            if ($('#chkTermsAndConditions2').prop('checked') == true) {
+
+                $('#divTermsAndConditions2').css('color', 'black');
+                confirmation("Confirm Request", "Do you want to proceed?", "$('#btnSubmitForm').click()");
+            
+                $('#ActionButton').val('Submit');
+                return false;
+            }
+            else {
+                SystemMessage("Must agree to Terms and Agreements before you proceed");
+                $('#divTermsAndConditions2').css('color', 'red');
+            }
+        }
+        else {
+            SystemMessage("Must agree to Terms and Agreements before you proceed");
+            $('#divTermsAndConditions1').css('color', 'red');
+        } 
+         
+    });
+
+
+    function ValidateAllDetails() {
+        var isValid = true;
+        var invFields = "";
+        var msg = "";
+        var tblBody = document.getElementById('listproduct').getElementsByTagName('tbody')[0];
+        var rowCount = tblBody.rows.length;
+
+        //Total Amount
+        if ($('#batch_PaidAmt').val() == '0.00' || $('#batch_PaidAmt').val() == '') {
+            $("#divPaidAmt").addClass("form-group has-error");
+            invFields = invFields + "<p>Total Amount is required.</p>";
+            isValid = false;
+        }
+        else {
+            $("#divPaidAmt").removeClass("form-group has-error");
+            $("#divPaidAmt").addClass("form-group");
+        }
+        //Vendor
+        if ($('#batch_VendorCd').val() == '') {
+            $("#divVendorDetails").addClass("form-group has-error");
+            invFields = invFields + "<p>Vendor is required.</p>";
+            isValid = false;
+        }
+        else {
+            $("#divVendorDetails").removeClass("form-group has-error");
+            $("#divVendorDetails").addClass("form-group");
+        }
+        if (rowCount > 0 && $('#listproduct > tbody').find("tr:first td").eq(0).text() == 'No items to display.') {
+            invFields = invFields + "<p>Request Details is required.</p>";
+            isValid = false;
+        }
+
+        if (!isValid) {
+            SystemMessage('Please validate the errors below: <br><br>' + invFields);
+        }
+
+        return isValid;
+    }
+
+    $('#confimationClose').click(function () {
+        $('#modal-confirmation').modal('hide');
+        $('body').removeClass('modal-open');
+    });
+    
+    $('#btnExit').click(function () {
+        $('#ActionButton').val('');
+        confirmation("Confirm Request", "Do you want to proceed?", "window.location.href = '@Url.Action("Index","Home",new { area = "" })';");
+        return false;
+    });
+
+</script>

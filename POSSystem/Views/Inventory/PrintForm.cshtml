@@ -1,0 +1,106 @@
+﻿@model POSSystem.ViewModel.OrderViewModel
+
+@{
+    ViewBag.Title = "PrintForm";
+    Layout = "~/Views/Shared/_PrintLayout.cshtml";
+}
+
+
+<div style="margin-left:25px;margin-right:25px;">
+    <h3><b>Product Inventory</b></h3>
+</div>
+<br />
+<div style="margin-left:25px;margin-right:25px;margin-bottom:10px;">
+    <h4><b>Inventory Summary</b></h4>
+    <div style="border-top:1px solid #eee; width: 100%; margin-bottom: 10px;"></div>
+    <table style="width: 100%;" cellpadding="1">
+        <tr>
+            <td width="20%"><label>Batch Number:</label></td>
+            <td width="30%">@Model.batch.BatchNbr</td>
+            <td width="20%"><label>Receiver Name:</label></td>
+            <td width="30%">@Model.batch.ReceiverNm</td>
+        </tr>
+        <tr>
+            <td width="20%"><label>Total Amount:</label></td>
+            <td width="30%">@Model.batch.PaidAmt</td>
+            <td width="20%"><label>Received Date:</label></td>
+            <td width="30%">@Convert.ToDateTime(Model.batch.ReceivedDate).ToShortDateString()</td>
+        </tr>
+        <tr>
+            <td width="20%"><label>Vendor Code:</label></td>
+            <td width="30%">@Model.batch.VendorCd</td>
+            <td width="20%"><label>Vendor Personnel:</label></td>
+            <td width="30%">@Model.batch.vendorContactPerson</td>
+        </tr>
+        <tr>
+            <td width="20%"><label>Vendor Name:</label></td>
+            <td width="30%">@Model.batch.VendorNm</td>
+            <td width="20%"><label>Contact No.:</label></td>
+            <td width="30%">@Model.batch.VendorContactNbr</td>
+        </tr>
+        <tr>
+            <td width="20%"><label>Location:</label></td>
+            <td width="30%">@Model.batch.VendorLocation</td>
+            <td width="20%">&nbsp;</td>
+            <td width="30%">&nbsp;</td>
+        </tr>
+    </table>
+</div>
+ 
+<br/>
+<div style="margin-left:25px;margin-right:25px;margin-bottom:10px;">
+    <h4><b>Inventory Details</b></h4>
+    <div style="border-top:1px solid #eee; width: 100%; margin-bottom: 10px;"></div>
+    <table class="table table-bordered table-condensed" id="listproduct">
+        <thead>
+            <tr>
+                <th>SKU</th>
+                <th>Variant No</th>
+                <th>Description 1</th>
+                <th>Description 2</th>
+                <th>Description 3</th>
+                <th>UOM</th>
+                <th>With VAT?</th>
+                <th>Category</th>
+                <th>Qty</th>
+                <th>Total Amount</th>
+                <th>Expiry Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.listproduct.Count > 0)
+            {
+                for (int i = 0; i < Model.listproduct.Count; i++)
+                {
+            <tr>
+                <td>@Model.listproduct[i].ItemId</td>
+                <td>@Model.listproduct[i].VariantNbr</td>
+                <td>@Model.listproduct[i].ProductDesc1</td>
+                <td>@Model.listproduct[i].ProductDesc2</td>
+                <td>@Model.listproduct[i].ProductDesc3</td>
+                <td>@Model.listproduct[i].UOM</td>
+                <td>@Model.listproduct[i].WithVat</td>
+                <td>@Model.listproduct[i].ProductCategory</td>
+                <td>@Model.listproduct[i].ReceivedQty</td>
+                <td>@Convert.ToDouble(Model.listproduct[i].BatchRetailAmount).ToString("#,##0.00")</td>
+                <td>@Convert.ToDateTime(Model.listproduct[i].ExpiryDate).ToShortDateString()</td> 
+            </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="11">No items to display.</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+    
+<link rel="stylesheet" href="@Url.Content("~/Content/printify.css")" />
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        window.print();
+    });
+</script>

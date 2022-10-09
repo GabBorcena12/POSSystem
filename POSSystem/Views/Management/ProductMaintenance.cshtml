@@ -1,0 +1,500 @@
+﻿@model POSSystem.ViewModel.MonitoringViewModel
+
+
+@{
+    ViewBag.Title = "Product Management";
+}
+@section Breadcrumbs{
+    <li><a href="#"><i class="glyphicon glyphicon-home"></i> Home</a></li>
+    <li>Worklist</li>
+    <li class="active">Product Management</li>
+}
+
+
+@if (ViewBag.Status != null)
+{
+    if (ViewBag.Status == "0")
+    {
+        <div class="callout callout-danger">
+            <h4>Warning!</h4>
+            <p>
+                @Html.Raw(ViewBag.Message)
+            </p>
+        </div>
+    }
+    else
+    {
+        <div class="callout callout-success">
+            <h4>Success!</h4>
+            <p>
+                @Html.Raw(ViewBag.Message)
+            </p>
+        </div>
+    }
+}
+
+@if (ViewBag.GetStatus != null)
+{
+    if (ViewBag.GetStatus == "0")
+    {
+        <div class="callout callout-danger">
+            <h4>Warning!</h4>
+            <p>
+                @Html.Raw(ViewBag.Message)
+            </p>
+        </div>
+    }
+}
+
+@using (Html.BeginForm("ProductMaintenance", "Management", FormMethod.Post, new { area = "", enctype = "multipart/form-data" }))
+{
+    @Html.HiddenFor(x => x.ActionButton)
+    @Html.HiddenFor(x => x.usersession.UserName)
+    <div class="box box-primary">
+        <div class="box-header with-border">
+            <h3 class="box-title">Product Management&nbsp;</h3>
+            <div class="box-tools pull-right">
+                <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+            </div>
+        </div>
+
+        <div class="box-header with-border">
+            <div class="btn-box-tool">
+                <button id="btnAddLine" type="button" class="btn btn-info btn-sm pull-left" data-toggle="modal" data-backdrop="static" data-keyboard="false" data-target="#modal-request-details" style="width: 150px">Add Product</button>
+            </div>
+        </div>
+        <div class="box-body">
+            <div class="row">
+                <div class="col-md-12">
+                    <table class="table table-bordered table-condensed dataTable" id="listProducts">
+                        <thead>
+                            <tr>
+                                <th>SKU</th>
+                                <th>Variant No</th>
+                                <th>Product Description</th>
+                                <th>Vendor</th>
+                                <th>Category</th>
+                                <th>Unit of Measure</th>
+                                <th>Expected Profit</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model.listProducts.Count > 0)
+                            {
+                                for (int i = 0; i < Model.listProducts.Count; i++)
+                                {
+                                    <tr>
+                                        <td>
+                                            @Model.listProducts[i].ItemId
+                                        </td>
+                                        <td>
+                                            @Model.listProducts[i].VariantNbr
+                                        </td>
+                                        <td>
+                                            @Model.listProducts[i].ProductDesc1
+                                        </td>
+                                        <td>
+                                            @Model.listProducts[i].VendorNm
+                                        </td>
+                                        <td>
+                                            @Model.listProducts[i].ProductCategory
+                                        </td>
+                                        <td>
+                                            @Model.listProducts[i].UOM
+                                        </td>
+                                        <td>
+                                            @switch (Model.listProducts[i].NetIncomeIdentifier)
+                                            {
+                                                case "Amount":
+                                                    <label>$</label> @Convert.ToDouble(Model.listProducts[i].NetIncome).ToString("#,##0.00")
+                                                    break;
+                                                case "Percentage":
+                                                    @Convert.ToDouble(Model.listProducts[i].NetIncome).ToString("#,##0.00") <label>%</label>
+                                                    break;
+                            }
+                                            @Html.HiddenFor(x => x.listProducts[i].ItemId, new { id = "hiddenItemId" + i })
+                                            @Html.HiddenFor(x => x.listProducts[i].VariantNbr, new { id = "hiddenVariantNbr" + i })
+                                            @Html.HiddenFor(x => x.listProducts[i].ProductDesc1, new { id = "hiddenProductDesc1" + i })
+                                            @Html.HiddenFor(x => x.listProducts[i].ProductDesc2, new { id = "hiddenProductDesc2" + i })
+                                            @Html.HiddenFor(x => x.listProducts[i].ProductDesc3, new { id = "hiddenProductDesc3" + i })
+                                            @Html.HiddenFor(x => x.listProducts[i].VendorCd, new { id = "hiddenVendorCd" + i })
+                                            @Html.HiddenFor(x => x.listProducts[i].VendorNm, new { id = "hiddenVendorNm" + i })
+                                            @Html.HiddenFor(x => x.listProducts[i].ProductCategory, new { id = "hiddenProductCategory" + i })
+                                            @Html.HiddenFor(x => x.listProducts[i].UOM, new { id = "hiddenUOM" + i })
+                                            @Html.HiddenFor(x => x.listProducts[i].NetIncome, new { id = "hiddenNetIncome" + i })
+                                            @Html.HiddenFor(x => x.listProducts[i].NetIncomeIdentifier, new { id = "hiddenNetIncomeIdentifier" + i })
+                                        </td>
+                                        <td align="center">
+                                            <button class="btn btn-sm btn-danger btn-sm EditProduct" id="EditProduct" style="margin-right:10px;" type="button" data-toggle="modal" data-backdrop="static" data-keyboard="false" data-target="#modal-sap-details">Edit</button>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="7">No items to display.</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <!-- /.box-body -->
+    </div>
+    <div style="display:none;">
+        <button type="submit" id="btnSubmitForm"></button>
+    </div>
+
+    <div class="modal modal-default fade" id="modal-request-details">
+        <div class="modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">
+                        Product
+                    </h4>
+                </div>
+                <div class="modal-body">
+                    <div class="box box-primary">
+                        <div class="box-body" id="ExistingId">
+                            <div class="row">
+                                <div class="col-md-12 form-horizontal">
+                                    <div class="form-group" id="divItemId">
+                                        <label class="control-label input-sm col-md-4">SKU<span class="text-red">*</span></label>
+                                        <div class="col-md-7">
+                                            @Html.TextBoxFor(x => x.Product.ItemId, new { @class = "form-control" })
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12 form-horizontal">
+                                    <div class="form-group" id="divItemId">
+                                        <label class="control-label input-sm col-md-4">Variant No<span class="text-red">*</span></label>
+                                        <div class="col-md-7">
+                                            @Html.TextBoxFor(x => x.Product.VariantNbr, new { @class = "form-control" })
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12 form-horizontal">
+                                    <div class="form-group" id="divItemId">
+                                        <label class="control-label input-sm col-md-4">Product Description<span class="text-red">*</span></label>
+                                        <div class="col-md-7">
+                                            @Html.TextBoxFor(x => x.Product.ProductDesc1, new { @class = "form-control" })
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12 form-horizontal">
+                                    <div class="form-group" id="divItemId">
+                                        <label class="control-label input-sm col-md-4">Product Description(Optional) </label>
+                                        <div class="col-md-7">
+                                            @Html.TextBoxFor(x => x.Product.ProductDesc2, new { @class = "form-control" })
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12 form-horizontal">
+                                    <div class="form-group" id="divItemId">
+                                        <label class="control-label input-sm col-md-4">Product Description(Optional)</label>
+                                        <div class="col-md-7">
+                                            @Html.TextBoxFor(x => x.Product.ProductDesc3, new { @class = "form-control" })
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12 form-horizontal">
+                                    <div class="form-group" id="divVendorNm">
+                                        <label class="control-label input-sm col-md-4">Vendor Name<span class="text-red">*</span></label>
+                                        <div class="col-md-7">
+                                            @Html.DropDownListFor(x => x.Product.VendorCd, Model.VendorList, new { @class = "form-control select2", style = "width: 100%;" })
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12 form-horizontal">
+                                    <div class="form-group" id="divProductCategory">
+                                        <label class="control-label input-sm col-md-4">Category<span class="text-red">*</span></label>
+                                        <div class="col-md-7">
+                                            @Html.DropDownListFor(x => x.Product.ProductCategory, Model.ProdCategoryList, new { @class = "form-control select2", style = "width: 100%;" })
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12 form-horizontal">
+                                    <div class="form-group" id="divUOM">
+                                        <label class="control-label input-sm col-md-4">UOM<span class="text-red">*</span></label>
+                                        <div class="col-md-7">
+                                            @Html.TextBoxFor(x => x.Product.UOM, new { @class = "form-control" })
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12 form-horizontal">
+                                    <div class="form-group" id="divNetIncomeIdentifier">
+                                        <label class="control-label input-sm col-md-4">Expected Profit<span class="text-red">*</span></label>
+                                        <div class="col-md-7">
+                                            @Html.DropDownListFor(x => x.Product.NetIncomeIdentifier, Model.IdentifierList, new { @class = "form-control" })
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12 form-horizontal">
+                                    <div class="form-group" id="divNetIncome">
+                                        <label class="control-label input-sm col-md-4"><span class="text-red"></span></label>
+                                        <div class="col-md-7">
+                                            @Html.TextBoxFor(x => x.Product.NetIncome, new { @class = "form-control" })
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default btn-sm pull-left btnCloseDetails" data-dismiss="modal" style="width: 120px">Close</button>
+                        <button class="btn btn-info btn-sm" type="button" id="btnAddDetails" style="width: 120px">Add Product</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+<!--Form Default-->
+<div class="modal fade" id="modal-confirmation">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Message from WebPage</h4>
+            </div>
+            <div class="modal-body">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default pull-left modalClose" data-dismiss="modal">Close</button>
+                <button id="modalYes" type="button" class="btn btn-primary" data-dismiss="modal">Proceed</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+
+<div class="modal fade" id="modal-alert">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Message from WebPage</h4>
+            </div>
+            <div class="modal-body">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default pull-left modalClose" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+<style type="text/css">
+    .loadinggif {
+        background: url('@Url.Content("~/Content/img/ui-anim-loading.gif")') no-repeat right;
+    }
+
+    .modalload {
+        position: fixed;
+        top: 0;
+        left: 0;
+        background-color: black;
+        z-index: 99;
+        opacity: 0.8;
+        filter: alphaopacity=80;
+        -moz-opacity: 0.8;
+        min-height: 100%;
+        width: 100%;
+    }
+
+    .loading {
+        font-family: Arial;
+        font-size: 10pt;
+        border: 5px solid #67CFF5;
+        width: 200px;
+        height: 100px;
+        display: none;
+        position: fixed;
+        background-color: White;
+        z-index: 999999;
+    }
+
+    .align-amount{
+        text-align:right;
+    }
+</style>
+
+<div class="loading" align="center">
+    Loading. Please wait.<br />
+    <br />
+    <img src='@Url.Content("~/Content/img/loading.gif")' />
+</div>
+
+<link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css">
+<script src="http://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script src="@Url.Content("~/Scripts/bootstrap-dt.net/jquery.dataTables.js")"></script>
+<script src="@Url.Content("~/Scripts/bootstrap-dt/dataTables.bootstrap.js")"></script>
+<link rel="stylesheet" href="@Url.Content("~/Content/bootstrap-dt/dataTables.bootstrap.css")">
+<script src="@Url.Content("~/Scripts/autoNumeric.js")"></script>
+
+<script type="text/javascript">
+    function ShowProgress() {
+        setTimeout(function () {
+            var modal = $('<div />');
+            modal.addClass("modalload");
+            $('body').append(modal);
+            var loading = $(".loading");
+            loading.show();
+
+            var top = Math.max($(window).height() / 2 - loading[0].offsetHeight / 2, 0);
+            var left = Math.max($(window).width() / 2 - loading[0].offsetWidth / 2, 0);
+            loading.css({ top: top, left: left });
+        }, 200);
+    }
+
+    function SystemMessage(message) {
+        $("#modal-alert > .modal-dialog > .modal-content > .modal-body").html("<p>" + message + "</p>");
+        $('#modal-alert').modal('show');
+    }
+    function confirmation(title, message, runFunction) {
+        $("#modal-confirmation > .modal-dialog > .modal-content > .modal-header > .modal-title").html(title);
+        $("#modal-confirmation > .modal-dialog > .modal-content > .modal-body").html("<p>" + message + "</p>");
+        $("#modal-confirmation").modal();
+        $("#modalYes").click(function () {
+            ShowProgress();
+            eval(runFunction);
+            return true;
+        });
+        $('#modal-confirmation').on('hidden.bs.modal', function (e) {
+            e.preventDefault();
+            return false;
+        })
+    }
+
+</script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#listProducts').DataTable();
+
+        if ('@ViewBag.Status' ==  "1") {
+            window.location.href = '@Url.Action("ProductMaintenance", "Management", new { area = "" })';
+            $('#ActionButton').val('');
+        }
+
+        $('#Product_VendorCd').select2();
+        $('#Product_ProductCategory').select2();
+    });
+    $('#btnSubmitForm').click(function () {
+        if ($('#btnAddDetails').html() == "Edit Product") {
+            $('#ActionButton').val('Edit');
+        }
+        else {
+            $('#ActionButton').val('New');
+        }
+        $('#Product_ItemId').prop('disabled', false);
+        $('#Product_VariantNbr').prop('disabled', false);
+    });
+
+    $(document).on('click', '.btnCloseDetails', function () {
+        $('#modal-request-details').modal('hide');
+        ClearModal();
+    });
+
+    $(document).on('click', '#btnAddDetails', function () {
+        confirmation("Confirm Request", "Do you want to proceed?", "$('#btnSubmitForm').click()");
+        $('#modal-request-details').modal('hide');
+        //ClearModal();
+    });
+    $('#btnAddLine').click(function () {
+        $('#btnAddDetails').html('Add Product');
+    });
+
+    $(document).on('click', '.EditProduct', function () {
+        $('#btnAddDetails').html('Edit Product');
+        $('#modal-request-details').modal('show');
+
+        $('#Product_ItemId').prop('disabled', true);
+        $('#Product_VariantNbr').prop('disabled', true);
+
+        var i = $(this).closest('tr');
+        var ItemId = $('#hiddenItemId' + i.index()).val();
+        var VariantNbr = $('#hiddenVariantNbr' + i.index()).val();
+        var ProductDesc1 = $('#hiddenProductDesc1' + i.index()).val();
+        var ProductDesc2 = $('#hiddenProductDesc2' + i.index()).val();
+        var ProductDesc3 = $('#hiddenProductDesc3' + i.index()).val();
+        var VendorCd = $('#hiddenVendorCd' + i.index()).val();
+        var ProductCategory = $('#hiddenProductCategory' + i.index()).val();
+        var UOM = $('#hiddenUOM' + i.index()).val();
+        var NetIncome = $('#hiddenNetIncome' + i.index()).val();
+        var NetIncomeIdentifier = $('#hiddenNetIncomeIdentifier' + i.index()).val();
+
+        $('#Product_ItemId').val(ItemId);
+        $('#Product_VariantNbr').val(VariantNbr);
+        $('#Product_ProductDesc1').val(ProductDesc1);
+        $('#Product_ProductDesc2').val(ProductDesc2);
+        $('#Product_ProductDesc3').val(ProductDesc3);
+        $('#Product_VendorCd').val(VendorCd).trigger("change");
+        $('#Product_ProductCategory').val(ProductCategory).trigger("change");
+        $('#Product_UOM').val(UOM);
+        $('#Product_NetIncome').val(NetIncome.replace(" %",""));
+        $('#Product_NetIncomeIdentifier').val(NetIncomeIdentifier);
+    });
+
+    function ClearModal() {
+        $('#Product_ItemId').val('');//.trigger("change");
+        $('#Product_VariantNbr').val('');//.trigger("change");
+        $('#Product_ProductDesc1').val('');
+        $('#Product_ProductDesc2').val('');
+        $('#Product_ProductDesc3').val('');
+        $('#Product_VendorCd').val('').trigger("change");
+        $('#Product_ProductCategory').val('').trigger("change");
+        $('#Product_UOM').val('');
+        $('#Product_NetIncome').val('');
+        $('#Product_NetIncomeIdentifier').val('');
+
+        $('#Product_ItemId').prop('disabled', false);
+        $('#Product_VariantNbr').prop('disabled', false);
+
+        if ($('#Product_NetIncomeIdentifier').val() == "") {
+            $('#divNetIncome').hide();
+        }
+        else {
+            $('#divNetIncome').show();
+        }
+    }
+
+    $('#Product_NetIncomeIdentifier').change(function () {
+        if ($('#Product_NetIncomeIdentifier').val() == "") {
+            $('#divNetIncome').hide();
+        }
+        else {
+            $('#divNetIncome').show();
+        }
+    });
+
+
+    $('#Product_NetIncome').autoNumeric({
+        vMin: '0.00',
+        vMax: '999999999999.00',
+        aSep: ',',
+        aDec: '.',
+        wEmpty: 'zero',
+        aForm: false
+    }).autofocus;
+</script>

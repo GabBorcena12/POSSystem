@@ -1,0 +1,75 @@
+﻿@model POSSystem.ViewModel.MonitoringViewModel
+
+
+@{
+    ViewBag.Title = "User Management";
+}
+@section Breadcrumbs{
+    <li><a href="#"><i class="glyphicon glyphicon-home"></i> Home</a></li>
+    <li>Worklist</li>
+    <li class="active">User Management</li>
+}
+
+<div class="box box-primary">
+    <div class="box-header with-border">
+        <h3 class="box-title">User Management&nbsp;</h3>
+        <div class="box-tools pull-right">
+            <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+        </div>
+    </div>
+    <div class="box-body">
+        <div class="row">
+            <div class="col-md-12">
+                <table class="table table-bordered table-condensed dataTable" id="employeeDetails">
+                    <thead>
+                        <tr>
+                            <th>User Name</th>
+                            <th>Full Name</th> 
+                            <th>User Role</th>
+                            <th>Account Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model.listemployeeDetails.Count > 0)
+                        {
+                            for (int i = 0; i < Model.listemployeeDetails.Count; i++)
+                            {
+                        <tr>
+                            <td>
+                                @Html.ActionLink(Model.listemployeeDetails[i].UserName, "UserProfile", "Account", new { area = "", Id = Model.listemployeeDetails[i].Id }, new { })
+                            </td> 
+                            <td>
+                                @Model.listemployeeDetails[i].FirstNm @Model.listemployeeDetails[i].LastNm
+                            </td>
+                            <td>
+                                @Model.listemployeeDetails[i].Role
+                            </td>
+                            <td>
+                                @Model.listemployeeDetails[i].IsActive
+                            </td>
+                        </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="5">No items to display.</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <!-- /.box-body -->
+</div>
+
+<script src="@Url.Content("~/Scripts/bootstrap-dt.net/jquery.dataTables.js")"></script>
+<script src="@Url.Content("~/Scripts/bootstrap-dt/dataTables.bootstrap.js")"></script>
+<link rel="stylesheet" href="@Url.Content("~/Content/bootstrap-dt/dataTables.bootstrap.css")">
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#employeeDetails').DataTable();
+    });
+</script>

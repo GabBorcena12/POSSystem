@@ -1,0 +1,13 @@
+﻿@media print {
+    aside#sidebar, header[role="banner"], footer, #actionButton {
+        display: none;
+    }
+
+    .form-group{
+        margin-bottom: 5px;
+    }
+
+    a[href]:after {
+        content: none !important;
+    }
+}

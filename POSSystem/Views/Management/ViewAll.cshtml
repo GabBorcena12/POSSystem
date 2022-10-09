@@ -1,0 +1,80 @@
+﻿@model POSSystem.ViewModel.MonitoringViewModel
+
+
+@{
+    ViewBag.Title = "User Activity Monitoring";
+}
+@section Breadcrumbs{
+    <li><a href="#"><i class="glyphicon glyphicon-home"></i> Home</a></li>
+    <li>Worklist</li>
+    <li class="active">User Activity Monitoring</li>
+}
+
+<div class="box box-primary">
+    <div class="box-header with-border">
+        <h3 class="box-title">User Activity Monitoring&nbsp;</h3>
+        <div class="box-tools pull-right">
+            <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+        </div>
+    </div>
+    <div class="box-body">
+        <div class="row">
+            <div class="col-md-12">
+                <table class="table table-bordered table-condensed dataTable" id="listSession">
+                    <thead>
+                        <tr>
+                            <th>User Name</th>
+                            <th>Full Name</th>
+                            <th>User Role</th>
+                            <th>Activity</th>
+                            <th>Log Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model.listSession.Count > 0)
+                        {
+                            for (int i = 0; i < Model.listSession.Count; i++)
+                            {
+                        <tr>
+                            <td>
+                                @Model.listSession[i].UserId
+                            </td>
+                            <td>
+                                @Model.listSession[i].FirstNm @Model.listSession[i].LastNm
+                            </td>
+
+                            <td>
+                                @Model.listSession[i].Role
+                            </td>
+                            <td>
+                                @Model.listSession[i].Status
+                            </td> 
+                            <td>
+                                @Model.listSession[i].CreateDttm
+                            </td>
+                        </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="5">No items to display.</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <!-- /.box-body -->
+</div>
+
+<script src="@Url.Content("~/Scripts/bootstrap-dt.net/jquery.dataTables.js")"></script>
+<script src="@Url.Content("~/Scripts/bootstrap-dt/dataTables.bootstrap.js")"></script>
+<link rel="stylesheet" href="@Url.Content("~/Content/bootstrap-dt/dataTables.bootstrap.css")">
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#listSession').DataTable();
+    });
+</script>

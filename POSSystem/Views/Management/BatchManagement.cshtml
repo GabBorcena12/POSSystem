@@ -1,0 +1,79 @@
+﻿@model POSSystem.ViewModel.MonitoringViewModel
+
+
+@{
+    ViewBag.Title = "Batch Tracking";
+}
+@section Breadcrumbs{
+    <li><a href="#"><i class="glyphicon glyphicon-home"></i> Home</a></li>
+    <li>Worklist</li>
+    <li class="active">Batch Tracking</li>
+}
+
+<div class="box box-primary">
+    <div class="box-header with-border">
+        <h3 class="box-title">Batch Tracking&nbsp;</h3>
+        <div class="box-tools pull-right">
+            <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+        </div>
+    </div>
+    <div class="box-body">
+        <div class="row">
+            <div class="col-md-12">
+                <table class="table table-bordered table-condensed dataTable" id="listBatch">
+                    <thead>
+                        <tr>
+                            <th>Batch Number</th>
+                            <th>Vendor Name</th> 
+                            <th>Receive Date</th>
+                            <th>Receiver</th>
+                            <th>Amount</th> 
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model.listBatch.Count > 0)
+                        {
+                            for (int i = 0; i < Model.listBatch.Count; i++)
+                            {
+                                <tr>
+                                    <td>
+                                        @Model.listBatch[i].BatchNbr
+                                    </td>
+                                    <td>
+                                        @Model.listBatch[i].VendorNm
+                                    </td>
+                                    <td>
+                                        @Convert.ToDateTime(Model.listBatch[i].ReceivedDate).ToShortDateString()
+                                    </td> 
+                                    <td>
+                                        @Model.listBatch[i].ReceiverNm
+                                    </td>
+                                    <td> 
+                                        @Convert.ToDouble(Model.listBatch[i].PaidAmt).ToString("#,##0.00")
+                                    </td>     
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="5">No items to display.</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <!-- /.box-body -->
+</div>
+
+<script src="@Url.Content("~/Scripts/bootstrap-dt.net/jquery.dataTables.js")"></script>
+<script src="@Url.Content("~/Scripts/bootstrap-dt/dataTables.bootstrap.js")"></script>
+<link rel="stylesheet" href="@Url.Content("~/Content/bootstrap-dt/dataTables.bootstrap.css")">
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#listBatch').DataTable();
+    });
+</script>

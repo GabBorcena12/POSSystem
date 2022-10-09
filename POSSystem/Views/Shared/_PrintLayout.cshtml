@@ -1,0 +1,26 @@
+﻿@{
+
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - Inventory System</title>
+
+    @Styles.Render("~/Styles/css")
+    @Scripts.Render("~/bundles/modernizr")
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/jqueryval")
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
+</head>
+<body class="hold-transition skin-blue-light layout-top-nav" style="height: auto; min-height: 100%;">
+    <div style="font-size: 12px;"> 
+        @RenderBody()
+    </div>
+    @Scripts.Render("~/bundles/bootstrapjs")
+    @RenderSection("scripts", required: false)
+</body>
+</html>

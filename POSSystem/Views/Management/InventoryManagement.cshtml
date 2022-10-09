@@ -1,0 +1,95 @@
+﻿@model POSSystem.ViewModel.MonitoringViewModel
+
+
+@{
+    ViewBag.Title = "Inventory Management";
+}
+@section Breadcrumbs{
+    <li><a href="#"><i class="glyphicon glyphicon-home"></i> Home</a></li>
+    <li>Worklist</li>
+    <li class="active">Product Inventory</li>
+}
+
+    <div class="box box-primary">
+        <div class="box-header with-border">
+            <h3 class="box-title">Product Inventory&nbsp;</h3>
+            <div class="box-tools pull-right">
+                <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+            </div>
+        </div> 
+        <div class="box-body">
+            <div class="row">
+                <div class="col-md-12">
+                    <table class="table table-bordered table-condensed dataTable" id="listInventory">
+                        <thead>
+                            <tr>
+                                <th>SKU</th>
+                                <th>Variant No</th>
+                                <th>Batch No</th>
+                                <th>Description</th>
+                                <th>List Price</th>
+                                <th>Retail Price</th>
+                                <th>Unit of Measure</th>
+                                <th>Available Qty</th>
+                                <th>Expiry Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model.listInventory.Count > 0)
+                            {
+                                for (int i = 0; i < Model.listInventory.Count; i++)
+                                {
+                                    <tr>
+                                        <td>
+                                            @Model.listInventory[i].SKU
+                                        </td>
+                                        <td>
+                                            @Model.listInventory[i].VariantNbr
+                                        </td>
+                                        <td>
+                                            @Model.listInventory[i].BatchNbr
+                                        </td>
+                                        <td>
+                                            @Model.listInventory[i].ProductDesc1
+                                        </td>
+                                        <td>
+                                            @Convert.ToDouble(Model.listInventory[i].ListPrice).ToString("#,##0.00")
+                                        </td>
+                                        <td>
+                                            @Convert.ToDouble(Model.listInventory[i].RetailPrice).ToString("#,##0.00")
+                                        </td>
+                                        <td>
+                                            @Model.listInventory[i].UOM
+                                        </td>
+                                        <td>
+                                            @Model.listInventory[i].InventoryOnHand
+                                        </td>
+                                        <td>
+                                            @Convert.ToDateTime(Model.listInventory[i].ExpiryDate).ToShortDateString()
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="9">No items to display.</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <!-- /.box-body -->
+    </div>
+
+<script src="@Url.Content("~/Scripts/bootstrap-dt.net/jquery.dataTables.js")"></script>
+<script src="@Url.Content("~/Scripts/bootstrap-dt/dataTables.bootstrap.js")"></script>
+<link rel="stylesheet" href="@Url.Content("~/Content/bootstrap-dt/dataTables.bootstrap.css")">
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#listInventory').DataTable();
+    });
+</script>

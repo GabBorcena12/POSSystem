@@ -1,0 +1,148 @@
+﻿@model POSSystem.Models.UserRegistration
+
+@{
+    ViewBag.Title = "Sign Up";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+ 
+@if (ViewBag.Status != null)
+{
+    if (ViewBag.Status == "1")
+    {
+        <div class="callout callout-success">
+            <h4>Success!</h4>
+            <p>
+                @Html.Raw(ViewBag.Message)
+            </p>
+        </div>
+    }
+    else
+    {
+        <div class="callout callout-danger">
+            <h4>Warning!</h4>
+            <p>
+                @Html.Raw(ViewBag.Message)
+            </p>
+        </div>
+    }
+}
+@using (Html.BeginForm("SignUp", "Account", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+    <div class="container" id="divcontainer">
+        <div class="form-horizontal">
+            <h3>User Registration</h3>
+            <hr />
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+            <div class="form-group">
+                @Html.LabelFor(model => model.UserId, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.UserId, new { htmlAttributes = new { @class = "form-control", oncopy = "return false", onpaste = "return false" } })
+                    @Html.ValidationMessageFor(model => model.UserId, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(model => model.FirstNm, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.FirstNm, new { htmlAttributes = new { @class = "form-control", oncopy = "return false", onpaste = "return false" } })
+                    @Html.ValidationMessageFor(model => model.FirstNm, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(model => model.LastNm, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.LastNm, new { htmlAttributes = new { @class = "form-control", oncopy = "return false", onpaste = "return false" } })
+                    @Html.ValidationMessageFor(model => model.LastNm, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.EmailAddress, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.EmailAddress, new { htmlAttributes = new { @class = "form-control", oncopy = "return false", onpaste = "return false" } })
+                    @Html.ValidationMessageFor(model => model.EmailAddress, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.ConfirmEmailAddress, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.ConfirmEmailAddress, new { htmlAttributes = new { @class = "form-control", oncopy = "return false", onpaste = "return false" } })
+                    @Html.ValidationMessageFor(model => model.ConfirmEmailAddress, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.Password, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.Password, new { htmlAttributes = new { @class = "form-control", oncopy = "return false", onpaste = "return false" } })
+                    @Html.ValidationMessageFor(model => model.Password, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.ConfirmPassword, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.ConfirmPassword, new { htmlAttributes = new { @class = "form-control", oncopy = "return false", onpaste = "return false" } })
+                    @Html.ValidationMessageFor(model => model.ConfirmPassword, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="col-md-offset-2 col-md-10">
+                    <input type="submit" value="Register" class="btn btn-default pull-right" />
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="modal-alert">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Message from WebPage</h4>
+                    </div>
+                    <div class="modal-body">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default pull-left modalClose" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+                <!-- /.modal-content -->
+            </div>
+            <!-- /.modal-dialog -->
+        </div>
+    </div>
+}
+
+
+<script>
+
+    function SystemMessage(message) {
+        $("#modal-alert > .modal-dialog > .modal-content > .modal-body").html("<p>" + message + "</p>");
+        $('#modal-alert').modal('show');
+    }
+     
+    $('.modalClose').click(function () {
+        window.location.href = '@Url.Action("Login", "Account")';
+    });
+
+    $(document).ready(function () {
+        
+        if ('@ViewBag.Status' ==  "1") {
+                window.location.href = '@Url.Action("Login", "Account", new { area = "" })';
+        }
+
+        $('.sidebar-toggle').click();
+        $('.sidebar-toggle').prop('disabled', true);
+    });
+</script>
+
+<style>
+    #divcontainer {
+        max-width: 50%;
+        width: 100%;
+        border: 3px solid white;
+        background-color: white;
+        box-shadow: 10px 10px 10px 10px #88888857;
+        border-radius: 10px
+    }
+</style>

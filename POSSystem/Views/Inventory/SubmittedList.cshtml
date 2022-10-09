@@ -1,0 +1,203 @@
+﻿@model POSSystem.ViewModel.MonitoringViewModel
+
+
+@{
+    ViewBag.Title = "Submitted List";
+}
+@section Breadcrumbs{
+    <li><a href="#"><i class="glyphicon glyphicon-home"></i> Home</a></li>
+    <li>Worklist</li>
+    <li class="active">Submitted List</li>
+}
+
+
+
+@using (Html.BeginForm("SubmittedList", "Inventory", FormMethod.Post, new { area = "", enctype = "multipart/form-data" }))
+{
+    <div class="box box-primary">
+        <div class="box-header with-border">
+            <h3 class="box-title">Submitted List&nbsp;</h3>
+            <div class="box-tools pull-right">
+                <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+            </div>
+        </div>
+
+        <div class="box-body">
+            <div class="row">
+                <div class="col-md-12">
+                    <table class="table table-bordered table-condensed dataTable" id="listBatch">
+                        <thead>
+                            <tr>
+                                <th>Batch No</th>
+                                <th>Status</th>
+                                <th>Vendor</th>
+                                <th>Receiver</th>
+                                <th>Received Date</th>
+                                <th>Total Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model.listBatch.Count > 0)
+                            {
+                                for (int i = 0; i < Model.listBatch.Count; i++)
+                                {
+                                    <tr>
+                                        <td>
+                                            @Html.ActionLink(@Model.listBatch[i].BatchNbr, "ViewForm", "Inventory", new { Id = @Model.listBatch[i].BatchNbr }, new { })
+                                        </td>
+                                        <td>
+                                            @Model.listBatch[i].Status
+                                        </td>
+                                        <td>
+                                            @Model.listBatch[i].VendorNm
+                                        </td>
+                                        <td>
+                                            @Model.listBatch[i].ReceiverNm
+                                        </td>
+                                        <td>
+                                            @Model.listBatch[i].ReceivedDate
+                                        </td>
+                                        <td>
+                                            @Model.listBatch[i].PaidAmt
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="5">No items to display.</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <!-- /.box-body -->
+    </div>
+
+}
+<!--Form Default-->
+<div class="modal fade" id="modal-confirmation">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Message from WebPage</h4>
+            </div>
+            <div class="modal-body">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default pull-left modalClose" data-dismiss="modal">Close</button>
+                <button id="modalYes" type="button" class="btn btn-primary" data-dismiss="modal">Proceed</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+
+<div class="modal fade" id="modal-alert">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Message from WebPage</h4>
+            </div>
+            <div class="modal-body">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default pull-left modalClose" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+
+<div class="loading" align="center">
+    Loading. Please wait.<br />
+    <br />
+    <img src='@Url.Content("~/Content/img/loading.gif")' />
+</div>
+<style type="text/css">
+    .loadinggif {
+        background: url('@Url.Content("~/Content/img/ui-anim-loading.gif")') no-repeat right;
+    }
+
+    .modalload {
+        position: fixed;
+        top: 0;
+        left: 0;
+        background-color: black;
+        z-index: 99;
+        opacity: 0.8;
+        filter: alphaopacity=80;
+        -moz-opacity: 0.8;
+        min-height: 100%;
+        width: 100%;
+    }
+
+    .loading {
+        font-family: Arial;
+        font-size: 10pt;
+        border: 5px solid #67CFF5;
+        width: 200px;
+        height: 100px;
+        display: none;
+        position: fixed;
+        background-color: White;
+        z-index: 999999;
+    }
+
+    .align-amount{
+        text-align:right;
+    }
+</style>
+
+
+<link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css">
+<script src="http://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script src="@Url.Content("~/Scripts/bootstrap-dt.net/jquery.dataTables.js")"></script>
+<script src="@Url.Content("~/Scripts/bootstrap-dt/dataTables.bootstrap.js")"></script>
+<link rel="stylesheet" href="@Url.Content("~/Content/bootstrap-dt/dataTables.bootstrap.css")">
+
+<script type="text/javascript">
+    function ShowProgress() {
+        setTimeout(function () {
+            var modal = $('<div />');
+            modal.addClass("modalload");
+            $('body').append(modal);
+            var loading = $(".loading");
+            loading.show();
+
+            var top = Math.max($(window).height() / 2 - loading[0].offsetHeight / 2, 0);
+            var left = Math.max($(window).width() / 2 - loading[0].offsetWidth / 2, 0);
+            loading.css({ top: top, left: left });
+        }, 200);
+    }
+
+    function SystemMessage(message) {
+        $("#modal-alert > .modal-dialog > .modal-content > .modal-body").html("<p>" + message + "</p>");
+        $('#modal-alert').modal('show');
+    }
+    function confirmation(title, message, runFunction) {
+        $("#modal-confirmation > .modal-dialog > .modal-content > .modal-header > .modal-title").html(title);
+        $("#modal-confirmation > .modal-dialog > .modal-content > .modal-body").html("<p>" + message + "</p>");
+        $("#modal-confirmation").modal();
+        $("#modalYes").click(function () {
+            ShowProgress();
+            eval(runFunction);
+            return true;
+        });
+        $('#modal-confirmation').on('hidden.bs.modal', function (e) {
+            e.preventDefault();
+            return false;
+        })
+    }
+
+</script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#listBatch').DataTable();
+    });
+</script>
