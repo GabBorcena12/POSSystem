@@ -52,7 +52,7 @@ namespace POSSystem
             Session["USER_SESSION"] = null;
         }
         protected void Logout()
-        {
+        { 
             Session["USER_SESSION"] = null;
         }
         protected void Application_Error()
